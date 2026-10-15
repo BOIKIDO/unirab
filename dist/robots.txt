@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /portal
+Disallow: /api/
+Disallow: /checkout
+Disallow: /payment-success
+
+Sitemap: https://www.unirab.com/sitemap.xml
