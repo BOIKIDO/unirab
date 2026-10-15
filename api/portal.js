@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { checkMailbox } from '../lib/mail-watch.js';
+import { makePortalToken } from './verify-magic-link.js';
 
 const sign = (payload) => createHmac('sha256', process.env.MAGIC_LINK_SECRET).update(payload).digest('base64url');
 const safeEqual = (a, b) => a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
@@ -85,6 +86,28 @@ export default async function handler(request, response) {
   if (!process.env.STRIPE_SECRET_KEY) return response.status(500).json({ error: 'Not configured.' });
 
   try {
+    // ----- GET ?action=session : validate + refresh the session cookie,
+    // return light profile data for the site-wide profile widget -----
+    if (action === 'session') {
+      const customer = await getCustomerByEmail(auth.e);
+      if (!customer) return response.status(404).json({ error: 'No UNIRAB account was found for this email address.' });
+      const sRes = await fetch(`https://api.stripe.com/v1/subscriptions?customer=${encodeURIComponent(customer.id)}&limit=5`, {
+        headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}` }
+      });
+      const subs = await sRes.json();
+      const hasActiveSubscription = sRes.ok
+        ? (subs.data || []).some((s) => ['active', 'trialing', 'past_due'].includes(s.status))
+        : false;
+      response.setHeader('Cache-Control', 'no-store');
+      return response.status(200).json({
+        ok: true,
+        email: customer.email,
+        name: customer.name || null,
+        hasActiveSubscription,
+        token: makePortalToken(customer.email, 60 * 24 * 30)
+      });
+    }
+
     // ----- GET ?action=billing : open the Stripe billing portal -----
     if (action === 'billing') {
       const customer = await getCustomerByEmail(auth.e);
