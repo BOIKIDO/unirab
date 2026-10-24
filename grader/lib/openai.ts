@@ -20,10 +20,11 @@ export async function queryOpenAI(prompt: string): Promise<string> {
   return res.choices[0]?.message?.content ?? ''
 }
 
-// gpt-4o-search-preview — real web search, like a user on ChatGPT
+// gpt-5-search-api — real web search, like a user on ChatGPT
+// (gpt-4o-search-preview was retired by OpenAI in 2026)
 export async function queryOpenAISearch(prompt: string): Promise<string> {
   const res = await getOpenAI().chat.completions.create({
-    model: 'gpt-4o-search-preview',
+    model: 'gpt-5-search-api',
     messages: [{ role: 'user', content: prompt }],
     web_search_options: {},
   })

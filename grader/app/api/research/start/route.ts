@@ -83,11 +83,20 @@ export async function POST(req: NextRequest) {
       )
     } else {
       const workerUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/worker/research`
-      await getQstash().publishJSON({
-        url: workerUrl,
-        body: { jobId: job.id },
-        retries: 2,
-      })
+      try {
+        await getQstash().publishJSON({
+          url: workerUrl,
+          body: { jobId: job.id },
+          retries: 2,
+        })
+      } catch (qstashErr) {
+        // QStash unavailable: run the worker in-process as a best-effort fallback.
+        // (Serverless may freeze long scans - recreate QStash for production reliability.)
+        console.warn('[research/start] QStash publish failed, running inline:', qstashErr instanceof Error ? qstashErr.message : qstashErr)
+        runResearch(job.id).catch((err) =>
+          console.error(`[research/start] inline worker error for ${job.id}:`, err)
+        )
+      }
     }
 
     return NextResponse.json({ success: true, data: { jobId: job.id } })

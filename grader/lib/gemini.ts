@@ -4,12 +4,27 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 // gemini-2.5-flash with Google Search grounding — real web results like a user would see
 export async function queryGeminiWithSearch(prompt: string): Promise<string> {
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-2.5-flash',
-    tools: [{ googleSearchRetrieval: {} }],
-  })
-  const result = await model.generateContent(prompt)
-  return result.response.text()
+  // Direct REST call: the SDK's googleSearchRetrieval tool is deprecated for
+  // gemini-2.5 models; the modern `google_search` tool works via v1beta.
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        tools: [{ google_search: {} }],
+      }),
+      signal: AbortSignal.timeout(17000),
+    }
+  )
+  if (!res.ok) {
+    console.error('[gemini] grounded request failed', res.status, (await res.text().catch(() => '')).slice(0, 200))
+    return ''
+  }
+  const data = await res.json()
+  const parts = data?.candidates?.[0]?.content?.parts ?? []
+  return parts.map((p: { text?: string }) => p.text ?? '').join('')
 }
 
 // gemini-2.5-flash-lite for high-volume audit queries (~20× per report)

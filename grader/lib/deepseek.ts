@@ -17,7 +17,9 @@ function getDeepSeek() {
 // deepseek-v4-pro is a reasoning model: it spends tokens on internal
 // `reasoning_content` before producing `content`. max_tokens must include
 // both, so we give it generous headroom or the actual output comes back empty.
-const MODEL = 'deepseek-v4-pro'
+// deepseek-flash: non-reasoning, supports JSON mode (v4-pro burns its token
+// budget on reasoning_content and returns empty content in JSON mode)
+const MODEL = 'deepseek-flash'
 
 async function withRetry<T>(label: string, fn: () => Promise<T>, attempts = 3): Promise<T> {
   let lastErr: unknown
