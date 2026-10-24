@@ -84,7 +84,7 @@ export default function ProgressTracker({ jobId, onComplete }: Props) {
                   {step.label}
                 </span>
                 <span className={`text-[10px] font-bold ml-2 shrink-0 ${
-                  done ? 'text-[#22C55E]' : active ? 'text-[#8a6a00]' : 'text-transparent'
+                  done ? 'text-[#22C55E]' : active ? 'text-[#8f5148]' : 'text-transparent'
                 }`}>
                   {done ? 'Done' : active ? 'Running…' : '·'}
                 </span>

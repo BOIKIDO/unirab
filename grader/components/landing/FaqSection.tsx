@@ -32,7 +32,7 @@ export default function FaqSection() {
     <section className="bg-[#f3f8f6] py-16 md:py-20 px-6 md:px-12 lg:px-20">
       <div className="max-w-4xl mx-auto">
         <div className="mb-10">
-          <p className="text-[#8a6a00] text-xs font-bold tracking-[0.2em] uppercase mb-3">FAQ</p>
+          <p className="text-[#8f5148] text-xs font-bold tracking-[0.2em] uppercase mb-3">FAQ</p>
           <h2 className="font-black text-3xl md:text-4xl text-[#102a2a] tracking-tight">Common questions.</h2>
         </div>
 

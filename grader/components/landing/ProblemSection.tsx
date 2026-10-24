@@ -104,7 +104,7 @@ export default function ProblemSection() {
               <div className="space-y-2.5">
                 {MOCK_RESULTS[queryIndex].map((name, i) => (
                   <div key={name} className="flex items-center gap-3">
-                    <span className="w-6 h-6 rounded-full bg-[#ff735d] text-black text-xs font-black flex items-center justify-center shrink-0">
+                    <span className="w-6 h-6 rounded-full bg-[#ff735d] text-[#1d2423] text-xs font-black flex items-center justify-center shrink-0">
                       {i + 1}
                     </span>
                     <span className="text-[#102a2a] font-semibold text-sm">{name}</span>

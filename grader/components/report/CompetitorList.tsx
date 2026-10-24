@@ -69,7 +69,7 @@ export default function CompetitorList({ competitors, businessName, businessMent
     return (
       <div className="fade-up bg-white border border-black/[0.08] shadow-[var(--shadow-elevated)] rounded-2xl p-6 md:p-7 flex flex-col gap-4">
         <div>
-          <p className="text-[#8a6a00] text-xs font-semibold tracking-[0.24em] uppercase mb-1">Competitor Analysis</p>
+          <p className="text-[#8f5148] text-xs font-semibold tracking-[0.24em] uppercase mb-1">Competitor Analysis</p>
           <h2 className="text-[#102a2a] font-black text-xl tracking-[-0.02em]">Your AI search position</h2>
         </div>
         <p className="text-[#8a9694] text-sm text-center py-8">No competitors detected across any AI queries for this market.</p>
@@ -80,7 +80,7 @@ export default function CompetitorList({ competitors, businessName, businessMent
   return (
     <div className="fade-up bg-white border border-black/[0.08] shadow-[var(--shadow-elevated)] rounded-2xl p-6 md:p-7 flex flex-col gap-4" style={{ animationDelay: '120ms' }}>
       <div>
-        <p className="text-[#8a6a00] text-xs font-semibold tracking-[0.24em] uppercase mb-1">Competitor Analysis</p>
+        <p className="text-[#8f5148] text-xs font-semibold tracking-[0.24em] uppercase mb-1">Competitor Analysis</p>
         <h2 className="text-[#102a2a] font-black text-xl tracking-[-0.02em]">AI search rankings</h2>
         <p className="text-[#5d6d6a] text-sm mt-1">
           {realRows.length > 0 ? (
@@ -114,9 +114,9 @@ export default function CompetitorList({ competitors, businessName, businessMent
             ? 'border-[#ff735d]/20'
             : 'border-transparent'
           const rankBg = row.isTarget
-            ? 'bg-[#ff735d] text-black'
+            ? 'bg-[#ff735d] text-[#1d2423]'
             : position === 1
-              ? 'bg-[#ff735d]/15 text-[#8a6a00]'
+              ? 'bg-[#ff735d]/15 text-[#8f5148]'
               : 'bg-gray-100 text-[#8a9694]'
           const nameStyle = row.isTarget
             ? 'text-[#102a2a] font-bold'
@@ -127,7 +127,7 @@ export default function CompetitorList({ competitors, businessName, businessMent
             : isTied ? '#E5A000'
             : '#D1D5DB'
           const metaColor = row.isTarget
-            ? 'text-[#8a6a00] font-bold'
+            ? 'text-[#8f5148] font-bold'
             : isAbove ? 'text-red-500 font-semibold'
             : isTied ? 'text-[#B45309] font-semibold'
             : 'text-[#8a9694]'
@@ -154,7 +154,7 @@ export default function CompetitorList({ competitors, businessName, businessMent
                   {row.name}
                 </span>
                 {row.isTarget && (
-                  <span className="shrink-0 text-[13px] font-bold text-[#8a6a00]">(you)</span>
+                  <span className="shrink-0 text-[13px] font-bold text-[#8f5148]">(you)</span>
                 )}
                 {!row.isTarget && row.verified === true && (
                   <span className="shrink-0 text-[9px] font-bold bg-green-50 text-green-600 border border-green-200 px-1.5 py-0.5 rounded-full whitespace-nowrap">verified</span>

@@ -175,7 +175,7 @@ export default function Hero() {
         </div>
         <a
           href={process.env.NEXT_PUBLIC_CALENDLY_URL ?? '#'}
-          className="bg-[#ff735d] text-black font-bold px-5 py-3 rounded-full text-sm hover:bg-yellow-400 transition-all focus:outline-none focus:ring-2 focus:ring-[#ff735d]/50 focus:ring-offset-2"
+          className="bg-[#ff735d] text-[#1d2423] font-bold px-5 py-3 rounded-full text-sm hover:bg-[#ff846f] transition-all focus:outline-none focus:ring-2 focus:ring-[#ff735d]/50 focus:ring-offset-2"
         >
           Book a Free Call
         </a>
@@ -232,7 +232,7 @@ export default function Hero() {
                 <button
                   onClick={handleRun}
                   disabled={!selected || running || activeKeywords.length === 0}
-                  className="flex items-center gap-2 bg-[#ff735d] text-black font-bold px-5 py-3 rounded-xl mr-1.5 my-1.5 shrink-0 whitespace-nowrap hover:bg-yellow-400 active:scale-[0.97] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[var(--shadow-glow)] focus:outline-none focus:ring-2 focus:ring-[#ff735d]/50 focus:ring-offset-2"
+                  className="flex items-center gap-2 bg-[#ff735d] text-[#1d2423] font-bold px-5 py-3 rounded-xl mr-1.5 my-1.5 shrink-0 whitespace-nowrap hover:bg-[#ff846f] active:scale-[0.97] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[var(--shadow-glow)] focus:outline-none focus:ring-2 focus:ring-[#ff735d]/50 focus:ring-offset-2"
                 >
                   {running ? (
                     <>

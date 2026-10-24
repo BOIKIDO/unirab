@@ -4,7 +4,7 @@ export default function ClosingCta() {
   return (
     <section className="bg-white py-24 md:py-32 px-6 md:px-12 lg:px-20 border-t border-black/[0.06]">
       <div className="max-w-4xl mx-auto text-center">
-        <p className="text-[#8a6a00] text-xs font-normal tracking-[0.24em] uppercase mb-5">Don&apos;t Lose Jobs to a Competitor</p>
+        <p className="text-[#8f5148] text-xs font-normal tracking-[0.24em] uppercase mb-5">Don&apos;t Lose Jobs to a Competitor</p>
         <h2 className="font-black text-2xl sm:text-3xl md:text-5xl text-[#102a2a] tracking-[-0.02em] leading-[1.1] mb-5">
           Find out if AI is sending <span className="text-[#ff735d]">your customers elsewhere.</span>
         </h2>
@@ -17,7 +17,7 @@ export default function ClosingCta() {
         <a
           href="#"
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
-          className="inline-flex items-center gap-2 bg-[#ff735d] text-black font-bold px-10 py-4 rounded-xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-[0.97] transition-all duration-200 text-lg shadow-[var(--shadow-glow)]"
+          className="inline-flex items-center gap-2 bg-[#ff735d] text-[#1d2423] font-bold px-10 py-4 rounded-xl hover:bg-[#ff846f] hover:scale-[1.02] active:scale-[0.97] transition-all duration-200 text-lg shadow-[var(--shadow-glow)]"
         >
           Run My Free Report
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

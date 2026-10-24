@@ -53,7 +53,7 @@ export default function ReportCta({ score }: Props) {
           href={process.env.NEXT_PUBLIC_CALENDLY_URL ?? '#'}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-[#ff735d] text-black font-bold px-8 md:px-10 py-3.5 md:py-4 rounded-xl hover:bg-yellow-400 active:scale-[0.97] transition-all duration-200 text-base md:text-lg shadow-[var(--shadow-glow)]"
+          className="inline-flex items-center gap-2 bg-[#ff735d] text-[#1d2423] font-bold px-8 md:px-10 py-3.5 md:py-4 rounded-xl hover:bg-[#ff846f] active:scale-[0.97] transition-all duration-200 text-base md:text-lg shadow-[var(--shadow-glow)]"
         >
           {cta.button}
           <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

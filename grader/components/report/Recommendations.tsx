@@ -68,8 +68,8 @@ function InsightsContent({ data }: { data: InsightsData }) {
       {/* Market Analysis Summary */}
       <div className="border border-black/[0.08] shadow-[var(--shadow-rest)] rounded-2xl p-4 md:p-7 bg-white">
         <div className="flex items-center gap-2.5 md:gap-3 mb-3 md:mb-4">
-          <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl bg-yellow-50 border border-yellow-200 flex items-center justify-center shrink-0">
-            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#8a6a00]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg md:rounded-xl bg-[#eaf7f2] border border-[#dfe8e4] flex items-center justify-center shrink-0">
+            <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#8f5148]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
@@ -115,7 +115,7 @@ function InsightsContent({ data }: { data: InsightsData }) {
           <div className="space-y-3 md:space-y-5">
             {data.recommendations.map((rec, i) => (
               <div key={i} className="flex gap-2.5 md:gap-3">
-                <span className="text-[#8a6a00] font-black text-[11px] md:text-xs shrink-0 mt-0.5 w-4 md:w-5">{rec.icon}</span>
+                <span className="text-[#8f5148] font-black text-[11px] md:text-xs shrink-0 mt-0.5 w-4 md:w-5">{rec.icon}</span>
                 <p className="text-[#5d6d6a] text-[13px] md:text-sm leading-relaxed">{stripEmDashes(rec.text)}</p>
               </div>
             ))}

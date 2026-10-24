@@ -236,7 +236,7 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-[#ff735d] text-black font-bold px-6 py-3.5 md:py-4 rounded-xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-[0.96] focus:outline-none text-[15px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[var(--shadow-glow)] transition-all duration-200"
+          className="w-full bg-[#ff735d] text-[#1d2423] font-bold px-6 py-3.5 md:py-4 rounded-xl hover:bg-[#ff846f] hover:scale-[1.02] active:scale-[0.96] focus:outline-none text-[15px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[var(--shadow-glow)] transition-all duration-200"
         >
           {submitting ? (
             <>

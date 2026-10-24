@@ -34,7 +34,7 @@ export default function SequenceCta({ jobId, email, businessName, alreadyEnrolle
 
   if (state === 'done') {
     return (
-      <div className="bg-[#FFFBEB] border-2 border-[#ff735d]/40 rounded-2xl p-6 md:p-8 text-center shadow-[var(--shadow-rest)]">
+      <div className="bg-[#f6faf8] border-2 border-[#ff735d]/40 rounded-2xl p-6 md:p-8 text-center shadow-[var(--shadow-rest)]">
         <p className="text-green-600 text-[13px] font-semibold">
           {alreadyEnrolled
             ? `You're enrolled in the 5-Day Fix Plan. Check ${maskEmail(email)} for your next email.`
@@ -45,7 +45,7 @@ export default function SequenceCta({ jobId, email, businessName, alreadyEnrolle
   }
 
   return (
-    <div className="bg-[#FFFBEB] border-2 border-[#ff735d]/40 rounded-2xl p-6 md:p-8 text-center shadow-[var(--shadow-rest)]">
+    <div className="bg-[#f6faf8] border-2 border-[#ff735d]/40 rounded-2xl p-6 md:p-8 text-center shadow-[var(--shadow-rest)]">
       <h3 className="font-black text-[22px] text-[#102a2a] mb-2">
         Your 5-Day AI Visibility Fix Plan
       </h3>
@@ -55,7 +55,7 @@ export default function SequenceCta({ jobId, email, businessName, alreadyEnrolle
       <button
         onClick={handleEnroll}
         disabled={state === 'loading'}
-        className="bg-[#ff735d] text-black font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-[0.97] transition-all duration-200 shadow-[var(--shadow-glow)] inline-flex items-center gap-2"
+        className="bg-[#ff735d] text-[#1d2423] font-bold px-6 py-3 rounded-xl hover:bg-[#ff846f] hover:scale-[1.02] active:scale-[0.97] transition-all duration-200 shadow-[var(--shadow-glow)] inline-flex items-center gap-2"
       >
         {state === 'loading' ? 'Sending…' : 'Start the Free Course'}
         <span className="bg-[#102a2a] text-[#ff735d] text-[10px] font-bold px-2 py-0.5 rounded-full">5 days</span>

@@ -30,7 +30,7 @@ export default function WhyItMatters() {
     <section className="bg-[var(--surface-warm)] py-24 px-6 md:px-12 lg:px-20">
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
-          <p className="text-[#8a6a00] text-xs font-normal tracking-[0.24em] uppercase mb-4">Why It Matters</p>
+          <p className="text-[#8f5148] text-xs font-normal tracking-[0.24em] uppercase mb-4">Why It Matters</p>
           <h2 className="font-black text-4xl md:text-5xl text-[#102a2a] tracking-[-0.02em] leading-tight max-w-2xl">
             Every month you wait,<br />a competitor locks in<br /><span className="text-[#ff735d]">your next 50 leads.</span>
           </h2>
@@ -95,7 +95,7 @@ export default function WhyItMatters() {
                     {/* Rank */}
                     <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 border ${
                       item.you
-                        ? 'bg-[#ff735d] border-[#ff735d] text-black'
+                        ? 'bg-[#ff735d] border-[#ff735d] text-[#1d2423]'
                         : i === 0
                           ? 'border-[#ff735d]/40 text-[#ff735d] bg-[#ff735d]/10'
                           : i === 1

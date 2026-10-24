@@ -40,7 +40,7 @@ export default async function ReportPage({ params }: Props) {
 <span className="inline-flex items-baseline" style={{fontStyle:'italic', fontWeight:900, fontSize:26, letterSpacing:'-1.2px', color:'#102a2a'}}>UNI<span style={{color:'#ff735d'}}>RAB</span><span style={{color:'#ff735d', fontSize:'0.72em', verticalAlign:'super'}}>&bull;</span></span>
           <a
             href={process.env.NEXT_PUBLIC_CALENDLY_URL ?? '#'}
-            className="bg-[#ff735d] text-black font-bold px-4 py-2 md:px-5 md:py-2.5 rounded-full text-xs md:text-sm hover:bg-yellow-400 transition-all"
+            className="bg-[#ff735d] text-[#1d2423] font-bold px-4 py-2 md:px-5 md:py-2.5 rounded-full text-xs md:text-sm hover:bg-[#ff846f] transition-all"
           >
             Book a Free Call
           </a>

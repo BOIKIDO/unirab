@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full font-[family-name:var(--font-inter)] bg-white text-[#102a2a]">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-[#ff735d] focus:text-black focus:font-bold focus:px-4 focus:py-3 focus:rounded-xl focus:outline-none">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-[#ff735d] focus:text-[#1d2423] focus:font-bold focus:px-4 focus:py-3 focus:rounded-xl focus:outline-none">
           Skip to main content
         </a>
         <div id="main-content">{children}</div>

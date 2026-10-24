@@ -72,14 +72,14 @@ export default function HowItWorks() {
                 <div className="flex items-start justify-between mb-5">
                   <div
                     className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-500 ${
-                      emphasis ? 'bg-[#ff735d] text-black' : 'bg-black/[0.04] text-[#102a2a]'
+                      emphasis ? 'bg-[#ff735d] text-[#1d2423]' : 'bg-black/[0.04] text-[#102a2a]'
                     }`}
                   >
                     {step.icon}
                   </div>
                   <span
                     className={`text-[11px] font-bold tracking-[0.18em] transition-colors duration-500 ${
-                      emphasis ? 'text-[#ff735d]' : 'text-black/[0.25]'
+                      emphasis ? 'text-[#ff735d]' : 'text-[#1d2423]/[0.25]'
                     }`}
                   >
                     {step.number}
@@ -103,7 +103,7 @@ export default function HowItWorks() {
                 {i < STEPS.length - 1 && (
                   <span
                     aria-hidden="true"
-                    className="hidden lg:flex absolute top-1/2 -right-3.5 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white border border-black/[0.06] shadow-[var(--shadow-rest)] items-center justify-center text-black/30"
+                    className="hidden lg:flex absolute top-1/2 -right-3.5 -translate-y-1/2 z-10 w-7 h-7 rounded-full bg-white border border-black/[0.06] shadow-[var(--shadow-rest)] items-center justify-center text-[#1d2423]/30"
                   >
                     <CaretRight weight="bold" className="w-3 h-3" />
                   </span>
