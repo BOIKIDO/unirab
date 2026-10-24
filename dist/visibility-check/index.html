@@ -167,10 +167,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     bizInput.addEventListener('input',function(){
+      document.body.setAttribute('data-vc-typed', String((Number(document.body.getAttribute('data-vc-typed'))||0)+1));
       clearTimeout(timer);
       var q=bizInput.value.trim();
       if(q.length<2){hide();return;}
       timer=setTimeout(function(){
+        document.body.setAttribute('data-vc-fetch', q);
         fetch('/api/visibility-start?q='+encodeURIComponent(q))
           .then(function(r){return r.json();})
           .then(function(d){
@@ -178,9 +180,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               var sf=p.structured_formatting||{};
               return {main:sf.main_text||p.description||'',full:p.description||''};
             });
+            document.body.setAttribute('data-vc-got', String(items.length));
             render();
           })
-          .catch(function(){hide();});
+          .catch(function(e){document.body.setAttribute('data-vc-catch', String(e&&e.message||'err').slice(0,80));hide();});
       },250);
     });
 
