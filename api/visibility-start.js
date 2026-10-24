@@ -12,7 +12,7 @@ export default async function handler(request, response) {
   const business = String(request.body?.business || '').trim().slice(0, 160);
   if (!business) return response.status(400).json({ error: 'Please enter your business name.' });
 
-  const base = String(process.env.GRADER_URL || '').replace(/\/$/, '');
+  const base = String(process.env.GRADER_URL || 'https://unirab-grader-eta.vercel.app/grader').replace(/\/$/, '');
   if (!base) return response.status(200).json({ ok: false, fallback: true, reason: 'grader-offline' });
 
   try {

@@ -7,5 +7,15 @@
       "path": "/api/send-confirmation",
       "schedule": "17 3 * * *"
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/grader",
+      "destination": "https://unirab-grader-eta.vercel.app/grader"
+    },
+    {
+      "source": "/grader/:path*",
+      "destination": "https://unirab-grader-eta.vercel.app/grader/:path*"
+    }
   ]
 }
