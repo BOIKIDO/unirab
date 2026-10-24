@@ -109,6 +109,29 @@ export default async function handler(request, response) {
       });
     }
 
+    // ----- GET ?action=cheat-sheet : subscriber-only GEO cheat sheet page -----
+    // (Formerly its own api/cheat-sheet.js — merged to stay under the Hobby
+    // plan's 12-function limit.) Served only to holders of a valid portal
+    // token with an active/trialing/past-due subscription.
+    if (action === 'cheat-sheet') {
+      const denialPage = (heading, body) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${heading} | UNIRAB</title><style>body{margin:0;font:15px/1.6 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f3f8f6;color:#102a2a;display:grid;place-items:center;min-height:100vh;padding:24px;box-sizing:border-box}.card{max-width:460px;background:#fff;border:1px solid #dfe8e4;border-radius:14px;padding:32px 34px;box-shadow:0 12px 34px rgba(7,60,56,.07);text-align:center}h1{font-size:21px;margin:0 0 10px}p{color:#637170;margin:0 0 22px}a.btn{display:inline-block;background:#073c38;color:#fff;text-decoration:none;font-weight:800;font-size:13.5px;padding:12px 22px;border-radius:8px}</style></head><body><div class="card"><h1>${heading}</h1><p>${body}</p><a class="btn" href="/portal">Back to my portal</a></div></body></html>`;
+      response.setHeader('X-Robots-Tag', 'noindex');
+      const customer = await getCustomerByEmail(auth.e);
+      if (!customer) {
+        return response.status(403).send(denialPage('Subscribers only', 'The AI Visibility Cheat Sheet is exclusive to clients with an active subscription.'));
+      }
+      const sRes = await fetch(`https://api.stripe.com/v1/subscriptions?customer=${encodeURIComponent(customer.id)}&limit=5`, {
+        headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}` }
+      });
+      const subs = await sRes.json();
+      const live = sRes.ok ? (subs.data || []).find((s) => ['active', 'trialing', 'past_due'].includes(s.status)) : null;
+      if (!live) {
+        return response.status(403).send(denialPage('Subscribers only', 'The AI Visibility Cheat Sheet is exclusive to clients with an active subscription.'));
+      }
+      response.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return response.status(200).send(CHEAT_SHEET_HTML);
+    }
+
     // ----- GET ?action=billing : open the Stripe billing portal -----
     if (action === 'billing') {
       const customer = await getCustomerByEmail(auth.e);

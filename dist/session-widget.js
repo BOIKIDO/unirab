@@ -88,7 +88,7 @@
         '<div class="unirab-user-head">' + esc(data.email) + '</div>' +
         '<a role="menuitem" href="/portal?t=' + t + '">' + icon('user') + ' My profile</a>' +
         (data.hasActiveSubscription
-          ? '<a role="menuitem" href="/api/cheat-sheet?t=' + t + '">' + icon('file') + ' AI Cheat Sheet</a>'
+          ? '<a role="menuitem" href="/api/portal?action=cheat-sheet&t=' + t + '">' + icon('file') + ' AI Cheat Sheet</a>'
           : '') +
         '<a role="menuitem" href="/portal?t=' + t + '#upgrade">' + icon('up') + ' Upgrade subscription</a>' +
         '<div class="unirab-user-sep" role="separator"></div>' +
