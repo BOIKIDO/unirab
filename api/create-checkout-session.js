@@ -5,8 +5,6 @@ const PLANS = Object.freeze({
   business250: { monthly: 'price_1UPKoU0ArfCxocSQgLlYKLkU', yearly: 'price_1UPQem0ArfCxocSQMG1V09eJ' }
 });
 
-import { hashPassword } from './auth.js';
-
 export default async function handler(request, response) {
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');
@@ -36,16 +34,6 @@ export default async function handler(request, response) {
       const value = String(form[key] ?? '').trim().slice(0, 480);
       if (value) metaParams.append(`metadata[${metaKey}]`, value);
     }
-  }
-  // Optional portal password from the intake form: hash it here and carry it on
-  // the session — after payment, order-processing persists it as the
-  // customer's unirab_pw so the buyer can log in immediately.
-  const password = String(request.body?.password || '');
-  if (password) {
-    if (password.length < 8 || password.length > 100) {
-      return response.status(400).json({ error: 'Password must be at least 8 characters.' });
-    }
-    metaParams.append('metadata[pw]', hashPassword(password));
   }
   const params = new URLSearchParams({
     ui_mode: 'embedded',
