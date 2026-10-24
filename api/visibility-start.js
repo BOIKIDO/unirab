@@ -5,8 +5,23 @@
 export const config = { maxDuration: 60 };
 
 export default async function handler(request, response) {
+  // GET ?q= : autocomplete proxy for the lead-magnet search bar.
+  if (request.method === 'GET') {
+    const q = String(request.query?.q || '').trim();
+    if (q.length < 2) return response.status(200).json({ success: true, data: [] });
+    const graderBase = String(process.env.GRADER_URL || 'https://unirab-grader-eta.vercel.app/grader').replace(/\/$/, '');
+    try {
+      const res = await fetch(`${graderBase}/api/lookup?q=${encodeURIComponent(q)}`, { signal: AbortSignal.timeout(8000) });
+      const body = await res.json().catch(() => ({ success: true, data: [] }));
+      response.setHeader('Cache-Control', 'no-store');
+      return response.status(200).json(body);
+    } catch (error) {
+      console.error('visibility-start autocomplete failed:', error instanceof Error ? error.message : 'unknown');
+      return response.status(200).json({ success: true, data: [] });
+    }
+  }
   if (request.method !== 'POST') {
-    response.setHeader('Allow', 'POST');
+    response.setHeader('Allow', 'GET, POST');
     return response.status(405).json({ error: 'Method not allowed' });
   }
   const business = String(request.body?.business || '').trim().slice(0, 160);
