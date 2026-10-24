@@ -171,11 +171,11 @@ export default function Hero() {
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-black/[0.06]">
         <div className="flex items-baseline gap-2.5">
-          <img src="/faaxa-logo.svg" alt="Faaxa" className="w-32 h-auto" />
+<span className="inline-flex items-baseline" style={{fontStyle:'italic', fontWeight:900, fontSize:26, letterSpacing:'-1.2px', color:'#102a2a'}}>UNI<span style={{color:'#ff735d'}}>RAB</span><span style={{color:'#ff735d', fontSize:'0.72em', verticalAlign:'super'}}>&bull;</span></span>
         </div>
         <a
           href={process.env.NEXT_PUBLIC_CALENDLY_URL ?? '#'}
-          className="bg-[#F5C518] text-black font-bold px-5 py-3 rounded-full text-sm hover:bg-yellow-400 transition-all focus:outline-none focus:ring-2 focus:ring-[#F5C518]/50 focus:ring-offset-2"
+          className="bg-[#ff735d] text-black font-bold px-5 py-3 rounded-full text-sm hover:bg-yellow-400 transition-all focus:outline-none focus:ring-2 focus:ring-[#ff735d]/50 focus:ring-offset-2"
         >
           Book a Free Call
         </a>
@@ -184,24 +184,24 @@ export default function Hero() {
       {/* Hero content */}
       <div className="flex-1 flex flex-col items-center justify-center text-center px-6 md:px-12 lg:px-20 pt-16 md:pt-20 pb-16 max-w-5xl mx-auto w-full">
         {/* Headline */}
-        <h1 className="text-[#111827] font-black leading-[1.05] tracking-tight mb-6">
+        <h1 className="text-[#102a2a] font-black leading-[1.05] tracking-tight mb-6">
           <span className="block text-[1.3rem] md:text-[2.4rem] lg:text-[2.9rem] md:whitespace-nowrap">Homeowners Ask AI</span>
-          <span className="block text-[1.3rem] md:text-[2.4rem] lg:text-[2.9rem] text-[#F5C518]">&quot;Who&apos;s The Best Contractor?&quot;</span>
+          <span className="block text-[1.3rem] md:text-[2.4rem] lg:text-[2.9rem] text-[#ff735d]">&quot;Who&apos;s The Best Contractor?&quot;</span>
           <span className="block text-[1.3rem] md:text-[2.4rem] lg:text-[2.9rem]">Is Your Name Coming Up?</span>
         </h1>
 
-        <p className="text-[#4B5563] text-base md:text-lg max-w-lg mx-auto mb-3 leading-relaxed">
+        <p className="text-[#465956] text-base md:text-lg max-w-lg mx-auto mb-3 leading-relaxed">
           AI now answers more local contractor searches than Google. One name gets the call. Eleven others don&rsquo;t. See where you land, free of charge, in 90 seconds.
         </p>
 
-        <p className="text-[#9CA3AF] text-xs mb-9">
+        <p className="text-[#8a9694] text-xs mb-9">
           Trusted by roofers, HVAC teams, electricians, and plumbers across 1,400+ cities.
         </p>
 
         {/* Search bar */}
         <div className="w-full max-w-3xl mx-auto text-left">
           <div className="relative" ref={dropdownRef}>
-            <div className={`flex items-center bg-white border border-black/[0.12] shadow-[var(--shadow-elevated)] focus-within:border-[#F5C518] focus-within:shadow-[var(--shadow-glow)] transition-all duration-300 ${predictions.length > 0 ? 'rounded-t-xl border-b-0' : 'rounded-xl'}`}>
+            <div className={`flex items-center bg-white border border-black/[0.12] shadow-[var(--shadow-elevated)] focus-within:border-[#ff735d] focus-within:shadow-[var(--shadow-glow)] transition-all duration-300 ${predictions.length > 0 ? 'rounded-t-xl border-b-0' : 'rounded-xl'}`}>
                 {/* Input area */}
                 <div className="relative flex-1 min-w-0">
                   <input
@@ -210,18 +210,18 @@ export default function Hero() {
                     onChange={(e) => { setQuery(e.target.value); if (!e.target.value) clearSelection() }}
                     placeholder={animPlaceholder || 'Enter your business name…'}
                     disabled={!!selected}
-                    className="w-full bg-transparent px-5 py-4 text-[#111827] placeholder-gray-400 text-base focus:outline-none disabled:opacity-80"
+                    className="w-full bg-transparent px-5 py-4 text-[#102a2a] placeholder-gray-400 text-base focus:outline-none disabled:opacity-80"
                   />
                   {loading && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <div className="w-5 h-5 border-2 border-[#F5C518] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-5 h-5 border-2 border-[#ff735d] border-t-transparent rounded-full animate-spin" />
                     </div>
                   )}
                   {selected && (
                     <button
                       onClick={clearSelection}
                       aria-label="Clear selected business"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#F5C518]/40 rounded p-1 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#102a2a] focus:outline-none focus:ring-2 focus:ring-[#ff735d]/40 rounded p-1 transition-colors"
                     >
                       <X weight="bold" className="w-4 h-4" aria-hidden="true" />
                     </button>
@@ -232,7 +232,7 @@ export default function Hero() {
                 <button
                   onClick={handleRun}
                   disabled={!selected || running || activeKeywords.length === 0}
-                  className="flex items-center gap-2 bg-[#F5C518] text-black font-bold px-5 py-3 rounded-xl mr-1.5 my-1.5 shrink-0 whitespace-nowrap hover:bg-yellow-400 active:scale-[0.97] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[var(--shadow-glow)] focus:outline-none focus:ring-2 focus:ring-[#F5C518]/50 focus:ring-offset-2"
+                  className="flex items-center gap-2 bg-[#ff735d] text-black font-bold px-5 py-3 rounded-xl mr-1.5 my-1.5 shrink-0 whitespace-nowrap hover:bg-yellow-400 active:scale-[0.97] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-[var(--shadow-glow)] focus:outline-none focus:ring-2 focus:ring-[#ff735d]/50 focus:ring-offset-2"
                 >
                   {running ? (
                     <>
@@ -257,8 +257,8 @@ export default function Hero() {
                       onClick={() => handleSelect(p)}
                       className="w-full text-left px-5 py-3.5 hover:bg-gray-50 transition-colors border-b border-black/[0.06] last:border-0"
                     >
-                      <div className="text-[#111827] font-semibold text-sm">{p.structured_formatting.main_text}</div>
-                      <div className="text-[#6B7280] text-xs mt-0.5">{p.structured_formatting.secondary_text}</div>
+                      <div className="text-[#102a2a] font-semibold text-sm">{p.structured_formatting.main_text}</div>
+                      <div className="text-[#5d6d6a] text-xs mt-0.5">{p.structured_formatting.secondary_text}</div>
                     </button>
                   ))}
                 </div>
@@ -266,7 +266,7 @@ export default function Hero() {
             </div>
 
           {!selected && !error && (
-            <p className="mt-3 text-[#6B7280] text-sm">Search for your business above to get started.</p>
+            <p className="mt-3 text-[#5d6d6a] text-sm">Search for your business above to get started.</p>
           )}
 
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
@@ -277,34 +277,34 @@ export default function Hero() {
               {/* Business info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 mb-5 pb-5 border-b border-black/[0.06]">
                 <div>
-                  <span className="text-[#6B7280] text-sm">Business name: </span>
-                  <span className="text-[#111827] font-bold text-sm">{selected.name}</span>
+                  <span className="text-[#5d6d6a] text-sm">Business name: </span>
+                  <span className="text-[#102a2a] font-bold text-sm">{selected.name}</span>
                   {!selected.has_website && (
                     <span className="ml-2 text-xs font-semibold bg-orange-100 text-orange-600 border border-orange-200 px-2 py-0.5 rounded-full">No Website</span>
                   )}
                 </div>
                 <div>
-                  <span className="text-[#6B7280] text-sm">Primary service: </span>
-                  <span className="text-[#111827] font-bold text-sm capitalize">{selected.primary_service}</span>
+                  <span className="text-[#5d6d6a] text-sm">Primary service: </span>
+                  <span className="text-[#102a2a] font-bold text-sm capitalize">{selected.primary_service}</span>
                 </div>
                 {selected.website && (
                   <div>
-                    <span className="text-[#6B7280] text-sm">Website URL: </span>
-                    <a href={`https://${selected.website.replace(/^https?:\/\//, '')}`} target="_blank" rel="noopener noreferrer" className="text-[#2563EB] font-medium text-sm underline truncate block">
+                    <span className="text-[#5d6d6a] text-sm">Website URL: </span>
+                    <a href={`https://${selected.website.replace(/^https?:\/\//, '')}`} target="_blank" rel="noopener noreferrer" className="text-[#073c38] font-medium text-sm underline truncate block">
                       {selected.website.replace(/^https?:\/\//, '').split('/')[0].split('?')[0]}
                     </a>
                   </div>
                 )}
                 <div>
-                  <span className="text-[#6B7280] text-sm">Research location: </span>
-                  <span className="text-[#111827] font-bold text-sm">{selected.city}, {selected.state}</span>
+                  <span className="text-[#5d6d6a] text-sm">Research location: </span>
+                  <span className="text-[#102a2a] font-bold text-sm">{selected.city}, {selected.state}</span>
                 </div>
               </div>
 
               {/* Keywords */}
               <div>
-                <p className="text-[#6B7280] text-sm mb-3">
-                  <span className="font-semibold text-[#111827]">Keywords to Analyze:</span> We&apos;ll run AI queries for these primary keywords.
+                <p className="text-[#5d6d6a] text-sm mb-3">
+                  <span className="font-semibold text-[#102a2a]">Keywords to Analyze:</span> We&apos;ll run AI queries for these primary keywords.
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {[...new Set([...selected.keywords, ...activeKeywords.filter(k => !selected.keywords.includes(k))])].map((kw) => {
@@ -315,11 +315,11 @@ export default function Hero() {
                         onClick={() => toggleKeyword(kw)}
                         className={`flex items-center gap-1.5 px-4 py-2 rounded-full border text-sm font-semibold transition-all ${
                           active
-                            ? 'bg-white border-black/[0.12] text-[#111827]'
+                            ? 'bg-white border-black/[0.12] text-[#102a2a]'
                             : 'bg-gray-100 border-black/[0.08] text-gray-400 line-through'
                         }`}
                       >
-                        <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${active ? 'bg-[#111827] border-[#111827]' : 'border-black/[0.12] bg-white'}`}>
+                        <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${active ? 'bg-[#102a2a] border-[#102a2a]' : 'border-black/[0.12] bg-white'}`}>
                           {active && <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                         </span>
                         <span className="capitalize">{kw}</span>
@@ -341,13 +341,13 @@ export default function Hero() {
                         onBlur={addCustomKeyword}
                         aria-label="Add a custom keyword"
                         placeholder="e.g. deck building"
-                        className="border border-[#2563EB] rounded-full px-4 py-2 text-sm text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#2563EB]/40 w-40"
+                        className="border border-[#073c38] rounded-full px-4 py-2 text-sm text-[#102a2a] focus:outline-none focus:ring-2 focus:ring-[#073c38]/40 w-40"
                       />
                     </form>
                   ) : customKeywords.length < 3 ? (
                     <button
                       onClick={() => setAddingKeyword(true)}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-dashed border-[#2563EB] text-[#2563EB] text-sm font-semibold hover:bg-blue-50 transition-all"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-full border border-dashed border-[#073c38] text-[#073c38] text-sm font-semibold hover:bg-blue-50 transition-all"
                     >
                       + Add a keyword
                     </button>
@@ -357,12 +357,12 @@ export default function Hero() {
             </div>
           )}
 
-          {!selected && <p className="text-[#9CA3AF] text-xs mt-3 text-center">Free report. No credit card. Results in under 2 minutes.</p>}
+          {!selected && <p className="text-[#8a9694] text-xs mt-3 text-center">Free report. No credit card. Results in under 2 minutes.</p>}
         </div>
       </div>
 
       {/* Stats bar */}
-      <div className="bg-[#111827] text-white grid grid-cols-2 md:grid-cols-4">
+      <div className="bg-[#102a2a] text-white grid grid-cols-2 md:grid-cols-4">
         {[
           {
             stat: '1,400+',
@@ -393,7 +393,7 @@ export default function Hero() {
             key={i}
             className="px-5 md:px-8 py-6 md:py-7 border-r border-white/[0.08] last:border-r-0 border-b border-white/[0.08] [&:nth-child(n+3)]:border-b-0 md:border-b-0"
           >
-            <div className="flex items-center gap-2 text-[#F5C518] mb-3">
+            <div className="flex items-center gap-2 text-[#ff735d] mb-3">
               {item.icon}
               <span className="text-[11px] font-bold tracking-[0.18em] uppercase">{item.unit}</span>
             </div>

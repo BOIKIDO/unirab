@@ -73,9 +73,9 @@ function InsightsContent({ data }: { data: InsightsData }) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
-          <h2 className="font-black text-[#111827] text-base md:text-lg">Market Analysis Summary</h2>
+          <h2 className="font-black text-[#102a2a] text-base md:text-lg">Market Analysis Summary</h2>
         </div>
-        <p className="text-[#6B7280] leading-relaxed text-[13px] md:text-sm">{stripEmDashes(data.summary)}</p>
+        <p className="text-[#5d6d6a] leading-relaxed text-[13px] md:text-sm">{stripEmDashes(data.summary)}</p>
       </div>
 
       {/* Insights + Recommendations */}
@@ -87,7 +87,7 @@ function InsightsContent({ data }: { data: InsightsData }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </div>
-            <h3 className="font-black text-[#111827] text-sm md:text-base">Key Insights</h3>
+            <h3 className="font-black text-[#102a2a] text-sm md:text-base">Key Insights</h3>
           </div>
           <div className="space-y-3 md:space-y-5">
             {data.insights.map((insight, i) => (
@@ -97,7 +97,7 @@ function InsightsContent({ data }: { data: InsightsData }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <p className="text-[#6B7280] text-[13px] md:text-sm leading-relaxed">{stripEmDashes(insight)}</p>
+                <p className="text-[#5d6d6a] text-[13px] md:text-sm leading-relaxed">{stripEmDashes(insight)}</p>
               </div>
             ))}
           </div>
@@ -110,13 +110,13 @@ function InsightsContent({ data }: { data: InsightsData }) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
             </div>
-            <h3 className="font-black text-[#111827] text-sm md:text-base">Recommendations</h3>
+            <h3 className="font-black text-[#102a2a] text-sm md:text-base">Recommendations</h3>
           </div>
           <div className="space-y-3 md:space-y-5">
             {data.recommendations.map((rec, i) => (
               <div key={i} className="flex gap-2.5 md:gap-3">
                 <span className="text-[#8a6a00] font-black text-[11px] md:text-xs shrink-0 mt-0.5 w-4 md:w-5">{rec.icon}</span>
-                <p className="text-[#6B7280] text-[13px] md:text-sm leading-relaxed">{stripEmDashes(rec.text)}</p>
+                <p className="text-[#5d6d6a] text-[13px] md:text-sm leading-relaxed">{stripEmDashes(rec.text)}</p>
               </div>
             ))}
           </div>
@@ -154,13 +154,13 @@ export default function Recommendations(props: Props) {
         {/* Methodology note — hidden on mobile, visible on desktop */}
         <div className="hidden md:flex border border-black/[0.08] rounded-2xl p-5 gap-4 bg-white shadow-[var(--shadow-rest)]">
           <div className="w-9 h-9 rounded-xl bg-gray-50 border border-black/[0.08] flex items-center justify-center shrink-0 mt-0.5">
-            <svg className="w-4 h-4 text-[#6B7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[#5d6d6a]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div>
-            <h3 className="font-bold text-[#111827] text-sm mb-1">A note on AI search variability</h3>
-            <p className="text-[#6B7280] text-[13px] leading-relaxed">
+            <h3 className="font-bold text-[#102a2a] text-sm mb-1">A note on AI search variability</h3>
+            <p className="text-[#5d6d6a] text-[13px] leading-relaxed">
               AI tools deliver different results to different users based on location, search history, and account context. No single query has a universal answer. This report reflects a standardized benchmark across multiple query types and locations.
             </p>
           </div>

@@ -114,7 +114,7 @@ export default function ScoreGauge({ score, scoreLabel, chatgptScore, geminiScor
   const cx = SIZE / 2
 
   return (
-    <div className="fade-up bg-[#111827] border border-white/[0.08] border-t-4 border-t-[#F5C518] shadow-[var(--shadow-elevated)] rounded-2xl overflow-hidden">
+    <div className="fade-up bg-[#102a2a] border border-white/[0.08] border-t-4 border-t-[#ff735d] shadow-[var(--shadow-elevated)] rounded-2xl overflow-hidden">
       {/* Document header band */}
       <div className="px-6 md:px-8 py-5 border-b border-white/[0.08] flex items-end justify-between gap-4">
         <div>

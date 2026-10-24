@@ -29,11 +29,11 @@ export default function FaqSection() {
   const [open, setOpen] = useState<number | null>(null)
 
   return (
-    <section className="bg-[#f4f4f0] py-16 md:py-20 px-6 md:px-12 lg:px-20">
+    <section className="bg-[#f3f8f6] py-16 md:py-20 px-6 md:px-12 lg:px-20">
       <div className="max-w-4xl mx-auto">
         <div className="mb-10">
           <p className="text-[#8a6a00] text-xs font-bold tracking-[0.2em] uppercase mb-3">FAQ</p>
-          <h2 className="font-black text-3xl md:text-4xl text-[#111827] tracking-tight">Common questions.</h2>
+          <h2 className="font-black text-3xl md:text-4xl text-[#102a2a] tracking-tight">Common questions.</h2>
         </div>
 
         <div className="bg-white rounded-2xl border border-black/[0.08] divide-y divide-black/[0.06] overflow-hidden shadow-[var(--shadow-rest)]">
@@ -46,9 +46,9 @@ export default function FaqSection() {
                   aria-expanded={isOpen}
                   className="w-full text-left px-5 md:px-6 py-4 md:py-5 flex items-center justify-between gap-4 hover:bg-gray-50/60 focus:outline-none focus:bg-gray-50 transition-colors"
                 >
-                  <span className="font-bold text-[#111827] text-[15px] md:text-base">{faq.q}</span>
+                  <span className="font-bold text-[#102a2a] text-[15px] md:text-base">{faq.q}</span>
                   <span
-                    className={`shrink-0 text-[#9CA3AF] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                    className={`shrink-0 text-[#8a9694] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
@@ -57,7 +57,7 @@ export default function FaqSection() {
                 </button>
                 {isOpen && (
                   <div className="px-5 md:px-6 pb-5 pt-0 -mt-1">
-                    <p className="text-[#6B7280] text-sm md:text-base leading-relaxed">{faq.a}</p>
+                    <p className="text-[#5d6d6a] text-sm md:text-base leading-relaxed">{faq.a}</p>
                   </div>
                 )}
               </div>

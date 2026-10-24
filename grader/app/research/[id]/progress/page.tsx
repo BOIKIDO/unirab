@@ -71,7 +71,7 @@ function DidYouKnow() {
 
         {/* Credit badge */}
         <div
-          className="absolute bottom-1.5 left-2 md:bottom-3 md:left-4 bg-white/90 backdrop-blur-sm text-[#111827] text-[8px] md:text-[10px] font-semibold px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-full"
+          className="absolute bottom-1.5 left-2 md:bottom-3 md:left-4 bg-white/90 backdrop-blur-sm text-[#102a2a] text-[8px] md:text-[10px] font-semibold px-1.5 py-0.5 md:px-2.5 md:py-1 rounded-full"
           style={{
             opacity: visible ? 1 : 0,
             transform: visible ? 'translateY(0)' : 'translateY(4px)',
@@ -85,7 +85,7 @@ function DidYouKnow() {
       {/* Quote section */}
       <div className="px-3 py-2 md:px-6 md:py-5 md:flex-1 md:flex md:flex-col md:justify-center">
         <div className="flex items-center justify-between mb-2 md:mb-4">
-          <span className="text-[#111827] text-[9px] md:text-[11px] font-semibold tracking-[0.1em] md:tracking-[0.14em] uppercase opacity-40">
+          <span className="text-[#102a2a] text-[9px] md:text-[11px] font-semibold tracking-[0.1em] md:tracking-[0.14em] uppercase opacity-40">
             Insight {i + 1} of {TIPS.length}
           </span>
           <div className="flex gap-1 md:gap-1.5">
@@ -96,14 +96,14 @@ function DidYouKnow() {
                 style={{
                   width: idx === i ? 10 : 3,
                   height: 3,
-                  backgroundColor: idx === i ? '#111827' : '#E5E7EB',
+                  backgroundColor: idx === i ? '#102a2a' : '#dfe8e4',
                 }}
               />
             ))}
           </div>
         </div>
         <p
-          className="text-[#374151] text-[12px] md:text-[16px] leading-snug tracking-[0.01em] font-medium"
+          className="text-[#344745] text-[12px] md:text-[16px] leading-snug tracking-[0.01em] font-medium"
           style={{
             opacity: visible ? 1 : 0,
             transform: visible ? 'translateY(0)' : 'translateY(8px)',
@@ -142,17 +142,17 @@ export default function ProgressPage() {
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 md:px-12 py-5 border-b border-black/[0.06]">
         <div className="flex items-baseline gap-2.5">
-          <img src="/faaxa-logo.svg" alt="Faaxa" className="w-32 h-auto" />
+<span className="inline-flex items-baseline" style={{fontStyle:'italic', fontWeight:900, fontSize:26, letterSpacing:'-1.2px', color:'#102a2a'}}>UNI<span style={{color:'#ff735d'}}>RAB</span><span style={{color:'#ff735d', fontSize:'0.72em', verticalAlign:'super'}}>&bull;</span></span>
         </div>
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 md:px-12 py-16">
         <div className="text-center mb-12">
-          <p className="text-[#111827] text-[10px] font-semibold tracking-[0.16em] uppercase mb-4 opacity-40">Scanning now</p>
-          <h1 className="text-[#111827] font-black text-3xl md:text-4xl tracking-tight mb-3">
+          <p className="text-[#102a2a] text-[10px] font-semibold tracking-[0.16em] uppercase mb-4 opacity-40">Scanning now</p>
+          <h1 className="text-[#102a2a] font-black text-3xl md:text-4xl tracking-tight mb-3">
             Scanning AI platforms for your business&hellip;
           </h1>
-          <p className="text-[#6B7280] text-[15px]">
+          <p className="text-[#5d6d6a] text-[15px]">
             {formSubmitted && !jobComplete
               ? 'Almost done — your report will be ready in a few seconds.'
               : 'Fill in your details below while we run the scan.'}
@@ -169,12 +169,12 @@ export default function ProgressPage() {
           <div className="order-1 md:order-2 flex flex-col gap-4 md:h-full">
             {/* Scan progress */}
             <div className="bg-white border border-black/[0.08] rounded-2xl p-5 md:p-6 flex flex-col flex-1 shadow-[var(--shadow-rest)]">
-              <h2 className="text-[#111827] font-bold text-sm mb-4">Scan progress</h2>
+              <h2 className="text-[#102a2a] font-bold text-sm mb-4">Scan progress</h2>
               <ProgressTracker jobId={jobId} onComplete={handleJobComplete} />
 
               {jobComplete && !formSubmitted && (
-                <div className="mt-6 bg-[#F5C518]/8 border border-[#F5C518]/20 rounded-xl p-4">
-                  <p className="text-[#111827] font-semibold text-[13px]">
+                <div className="mt-6 bg-[#ff735d]/8 border border-[#ff735d]/20 rounded-xl p-4">
+                  <p className="text-[#102a2a] font-semibold text-[13px]">
                     Report ready &mdash; fill in your details to view it.
                   </p>
                 </div>
@@ -190,10 +190,10 @@ export default function ProgressPage() {
 
         {/* Platform logos */}
         <div className="mt-16 text-center">
-          <p className="text-[#111827] text-[10px] font-semibold tracking-[0.16em] uppercase mb-4 opacity-30">Scanning across</p>
+          <p className="text-[#102a2a] text-[10px] font-semibold tracking-[0.16em] uppercase mb-4 opacity-30">Scanning across</p>
           <div className="flex items-center justify-center gap-8">
             {['ChatGPT', 'Gemini'].map((p) => (
-              <span key={p} className="text-[#6B7280] font-semibold text-sm opacity-60">{p}</span>
+              <span key={p} className="text-[#5d6d6a] font-semibold text-sm opacity-60">{p}</span>
             ))}
           </div>
         </div>

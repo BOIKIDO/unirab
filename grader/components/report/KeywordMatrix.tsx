@@ -69,22 +69,22 @@ export default function KeywordMatrix({ keywords, queryResults, city, state }: P
   return (
     <section className="bg-white py-10 md:py-16 px-4 md:px-12 lg:px-20">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-black text-xl md:text-2xl text-[#111827] tracking-tight mb-1 md:mb-2">Keywords &amp; Locations</h2>
-        <p className="text-[#6B7280] text-xs md:text-sm mb-5 md:mb-8">Where your business appears across AI platforms for each tracked keyword and location.</p>
+        <h2 className="font-black text-xl md:text-2xl text-[#102a2a] tracking-tight mb-1 md:mb-2">Keywords &amp; Locations</h2>
+        <p className="text-[#5d6d6a] text-xs md:text-sm mb-5 md:mb-8">Where your business appears across AI platforms for each tracked keyword and location.</p>
 
         {/* Mobile: compact keyword cards */}
         <div className="md:hidden flex flex-col gap-2">
           {keywords.map((kw) => (
             <div key={kw} className="rounded-xl border border-black/[0.06] bg-white p-3">
-              <p className="font-bold text-[#111827] text-[13px] capitalize mb-2">{kw}</p>
+              <p className="font-bold text-[#102a2a] text-[13px] capitalize mb-2">{kw}</p>
               <div className="grid grid-cols-2 gap-1.5">
                 {PLATFORMS.map(({ key: pKey, label: pLabel }) => (
                   <div key={pKey} className="rounded-lg bg-gray-50/70 border border-black/[0.06] p-2.5">
-                    <p className="text-[9px] font-bold text-[#6B7280] uppercase tracking-[0.12em] mb-1.5">{pLabel}</p>
+                    <p className="text-[9px] font-bold text-[#5d6d6a] uppercase tracking-[0.12em] mb-1.5">{pLabel}</p>
                     <div className="flex flex-col gap-1">
                       {LOCATIONS.map(({ key: lKey }) => (
                         <div key={lKey} className="flex items-center justify-between gap-2">
-                          <span className="text-[11px] text-[#9CA3AF] truncate">{locationLabel(lKey)}</span>
+                          <span className="text-[11px] text-[#8a9694] truncate">{locationLabel(lKey)}</span>
                           {isMentioned(kw, pKey, lKey) ? <FoundCheck /> : <NotFoundMark />}
                         </div>
                       ))}
@@ -103,7 +103,7 @@ export default function KeywordMatrix({ keywords, queryResults, city, state }: P
               <tr className="bg-gray-50/70">
                 <th
                   rowSpan={2}
-                  className="text-left align-bottom px-6 py-5 font-bold text-[#111827] w-56 border-b border-black/[0.08]"
+                  className="text-left align-bottom px-6 py-5 font-bold text-[#102a2a] w-56 border-b border-black/[0.08]"
                 >
                   Keyword
                 </th>
@@ -111,7 +111,7 @@ export default function KeywordMatrix({ keywords, queryResults, city, state }: P
                   <th
                     key={key}
                     colSpan={2}
-                    className={`px-6 py-4 text-center font-bold text-[#111827] text-base ${
+                    className={`px-6 py-4 text-center font-bold text-[#102a2a] text-base ${
                       idx > 0 ? 'border-l border-black/[0.08]' : ''
                     }`}
                   >
@@ -130,10 +130,10 @@ export default function KeywordMatrix({ keywords, queryResults, city, state }: P
                         }`}
                       >
                         <div className="inline-flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg border border-black/[0.08] bg-white min-w-[88px]">
-                          <span className="text-[10px] font-bold text-[#6B7280] uppercase tracking-[0.12em] leading-none">
+                          <span className="text-[10px] font-bold text-[#5d6d6a] uppercase tracking-[0.12em] leading-none">
                             {locationLabel(lKey)}
                           </span>
-                          <span className="text-[10px] text-[#9CA3AF] lowercase tracking-wide leading-none">
+                          <span className="text-[10px] text-[#8a9694] lowercase tracking-wide leading-none">
                             ({lLabel})
                           </span>
                         </div>
@@ -151,7 +151,7 @@ export default function KeywordMatrix({ keywords, queryResults, city, state }: P
                     i % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'
                   }`}
                 >
-                  <td className="px-6 py-4 font-medium text-[#374151] capitalize align-middle">
+                  <td className="px-6 py-4 font-medium text-[#344745] capitalize align-middle">
                     {kw}
                   </td>
                   {PLATFORMS.map(({ key: pKey }, pIdx) => (
@@ -175,12 +175,12 @@ export default function KeywordMatrix({ keywords, queryResults, city, state }: P
         </div>
 
         {foundCells === 0 ? (
-          <p className="text-[#111827] font-semibold text-sm mt-4 text-center">
+          <p className="text-[#102a2a] font-semibold text-sm mt-4 text-center">
             Your business was not found in any AI search result for these keywords.
             This means {city} homeowners searching for these services are being sent to your competitors.
           </p>
         ) : (
-          <p className="text-[#6B7280] text-xs mt-4 text-center">
+          <p className="text-[#5d6d6a] text-xs mt-4 text-center">
             Your business appeared in {foundCells} of {totalCells} keyword-location-platform searches run in this scan.
           </p>
         )}

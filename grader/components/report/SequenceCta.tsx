@@ -34,7 +34,7 @@ export default function SequenceCta({ jobId, email, businessName, alreadyEnrolle
 
   if (state === 'done') {
     return (
-      <div className="bg-[#FFFBEB] border-2 border-[#F5C518]/40 rounded-2xl p-6 md:p-8 text-center shadow-[var(--shadow-rest)]">
+      <div className="bg-[#FFFBEB] border-2 border-[#ff735d]/40 rounded-2xl p-6 md:p-8 text-center shadow-[var(--shadow-rest)]">
         <p className="text-green-600 text-[13px] font-semibold">
           {alreadyEnrolled
             ? `You're enrolled in the 5-Day Fix Plan. Check ${maskEmail(email)} for your next email.`
@@ -45,22 +45,22 @@ export default function SequenceCta({ jobId, email, businessName, alreadyEnrolle
   }
 
   return (
-    <div className="bg-[#FFFBEB] border-2 border-[#F5C518]/40 rounded-2xl p-6 md:p-8 text-center shadow-[var(--shadow-rest)]">
-      <h3 className="font-black text-[22px] text-[#111827] mb-2">
+    <div className="bg-[#FFFBEB] border-2 border-[#ff735d]/40 rounded-2xl p-6 md:p-8 text-center shadow-[var(--shadow-rest)]">
+      <h3 className="font-black text-[22px] text-[#102a2a] mb-2">
         Your 5-Day AI Visibility Fix Plan
       </h3>
-      <p className="text-[15px] text-[#6B7280] mb-5">
+      <p className="text-[15px] text-[#5d6d6a] mb-5">
         One actionable tactic per day. Written for {businessName}.
       </p>
       <button
         onClick={handleEnroll}
         disabled={state === 'loading'}
-        className="bg-[#F5C518] text-black font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-[0.97] transition-all duration-200 shadow-[var(--shadow-glow)] inline-flex items-center gap-2"
+        className="bg-[#ff735d] text-black font-bold px-6 py-3 rounded-xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-[0.97] transition-all duration-200 shadow-[var(--shadow-glow)] inline-flex items-center gap-2"
       >
         {state === 'loading' ? 'Sending…' : 'Start the Free Course'}
-        <span className="bg-[#111827] text-[#F5C518] text-[10px] font-bold px-2 py-0.5 rounded-full">5 days</span>
+        <span className="bg-[#102a2a] text-[#ff735d] text-[10px] font-bold px-2 py-0.5 rounded-full">5 days</span>
       </button>
-      <p className="text-[#6B7280] text-[11px] mt-3">Day 1 goes to {maskEmail(email)} the moment you enroll.</p>
+      <p className="text-[#5d6d6a] text-[11px] mt-3">Day 1 goes to {maskEmail(email)} the moment you enroll.</p>
       {state === 'error' && <p className="text-red-500 text-xs mt-2">Something went wrong. Try again.</p>}
     </div>
   )

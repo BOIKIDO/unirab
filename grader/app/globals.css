@@ -33,40 +33,40 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #111827;
+  --foreground: #102a2a;
   --card: #ffffff;
-  --card-foreground: #111827;
+  --card-foreground: #102a2a;
   --popover: #ffffff;
-  --popover-foreground: #111827;
-  --primary: #111827;
+  --popover-foreground: #102a2a;
+  --primary: #073c38;
   --primary-foreground: #ffffff;
-  --secondary: #f4f4f0;
-  --secondary-foreground: #111827;
-  --muted: #f4f4f0;
-  --muted-foreground: #6B7280;
-  --accent: #f4f4f0;
-  --accent-foreground: #111827;
+  --secondary: #eaf7f2;
+  --secondary-foreground: #102a2a;
+  --muted: #f3f8f6;
+  --muted-foreground: #5d6d6a;
+  --accent: #eaf7f2;
+  --accent-foreground: #102a2a;
   --destructive: #EF4444;
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #2563EB;
+  --border: #dfe8e4;
+  --input: #dfe8e4;
+  --ring: #073c38;
   --radius: 0.75rem;
 
-  --gold: #F5C518;
-  --blue: #2563EB;
-  --dark: #0A0A0A;
+  --gold: #ff735d;
+  --blue: #073c38;
+  --dark: #062e2c;
 
   /* Design System: Shadows */
   --shadow-rest: 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
   --shadow-elevated: 0 4px 12px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --shadow-float: 0 8px 30px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
-  --shadow-glow: 0 2px 8px rgba(245,197,24,0.25), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-glow: 0 2px 8px rgba(255,115,93,0.25), 0 1px 2px rgba(0,0,0,0.06);
 
   /* Design System: Borders */
   --border-subtle: rgba(0,0,0,0.06);
   --border-default: rgba(0,0,0,0.08);
   --border-input: rgba(0,0,0,0.12);
-  --border-accent: rgba(245,197,24,0.30);
+  --border-accent: rgba(255,115,93,0.30);
 
   /* Design System: Radii */
   --radius-button: 0.75rem;
@@ -74,8 +74,8 @@
   --radius-input: 0.5rem;
 
   /* Design System: Surfaces */
-  --surface-warm: #FFFDF7;
-  --surface-cream: #f4f4f0;
+  --surface-warm: #ffffff;
+  --surface-cream: #f3f8f6;
 
   /* Design System: Motion */
   --ease-reveal: cubic-bezier(0.22, 1, 0.36, 1);

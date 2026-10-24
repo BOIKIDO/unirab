@@ -56,16 +56,16 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
     }
   }
 
-  const labelClass = 'block text-[#374151] text-[12px] font-semibold tracking-[0.02em] mb-1.5'
-  const inputClass = 'w-full bg-[#FAFAF8] border border-black/[0.12] rounded-lg px-4 py-3 md:py-3.5 text-[#111827] placeholder-[#9CA3AF] text-[15px] focus:outline-none focus:border-[#111827] transition-[border-color] duration-200'
+  const labelClass = 'block text-[#344745] text-[12px] font-semibold tracking-[0.02em] mb-1.5'
+  const inputClass = 'w-full bg-[#FAFAF8] border border-black/[0.12] rounded-lg px-4 py-3 md:py-3.5 text-[#102a2a] placeholder-[#8a9694] text-[15px] focus:outline-none focus:border-[#102a2a] transition-[border-color] duration-200'
   const inputErrorClass = 'border-red-400 focus:border-red-500'
-  const optionalInputClass = 'w-full bg-gray-50/50 border border-black/[0.08] border-l-[3px] border-l-black/[0.08] rounded-lg px-4 py-3 md:py-3.5 text-[#111827] placeholder-[#9CA3AF] text-[15px] focus:outline-none focus:border-[#111827] transition-[border-color] duration-200'
+  const optionalInputClass = 'w-full bg-gray-50/50 border border-black/[0.08] border-l-[3px] border-l-black/[0.08] rounded-lg px-4 py-3 md:py-3.5 text-[#102a2a] placeholder-[#8a9694] text-[15px] focus:outline-none focus:border-[#102a2a] transition-[border-color] duration-200'
 
   if (submitted) {
     return (
       <div className="bg-white border border-black/[0.08] shadow-[var(--shadow-elevated)] rounded-2xl p-4 md:p-8 flex flex-col">
-        <h3 className="text-[#111827] font-black text-[22px] tracking-[-0.015em] mb-1.5 md:mb-2">You&apos;re locked in.</h3>
-        <p className="text-[#6B7280] text-xs md:text-sm leading-relaxed mb-4 md:mb-8">
+        <h3 className="text-[#102a2a] font-black text-[22px] tracking-[-0.015em] mb-1.5 md:mb-2">You&apos;re locked in.</h3>
+        <p className="text-[#5d6d6a] text-xs md:text-sm leading-relaxed mb-4 md:mb-8">
           The moment our scan finishes you&apos;ll be taken straight to your report. We&apos;ll also drop a copy in your inbox so you can come back to it any time.
         </p>
 
@@ -75,8 +75,8 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <p className="text-[#111827] font-bold text-sm md:text-base mb-0.5 md:mb-1">Details received</p>
-          <p className="text-[#6B7280] text-xs md:text-sm">
+          <p className="text-[#102a2a] font-bold text-sm md:text-base mb-0.5 md:mb-1">Details received</p>
+          <p className="text-[#5d6d6a] text-xs md:text-sm">
             {jobComplete
               ? 'Opening your report now…'
               : 'We\'ll email your report the moment the scan completes.'}
@@ -84,13 +84,13 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
         </div>
 
         <div className="mt-4 md:mt-8 bg-gray-50 border border-black/[0.06] rounded-xl px-4 py-3 md:px-6 md:py-4 flex items-center justify-center gap-2 md:gap-3" role="status" aria-live="polite">
-          <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-black/[0.12] border-t-[#F5C518] rounded-full animate-spin" aria-hidden="true" />
-          <span className="text-[#374151] font-bold text-sm md:text-base">
+          <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-black/[0.12] border-t-[#ff735d] rounded-full animate-spin" aria-hidden="true" />
+          <span className="text-[#344745] font-bold text-sm md:text-base">
             {jobComplete ? 'Loading your report…' : 'Scanning AI platforms. Hold tight…'}
           </span>
         </div>
 
-        <p className="text-[#9CA3AF] text-[10px] md:text-xs text-center mt-3 md:mt-5 flex items-center justify-center gap-1 md:gap-1.5">
+        <p className="text-[#8a9694] text-[10px] md:text-xs text-center mt-3 md:mt-5 flex items-center justify-center gap-1 md:gap-1.5">
           <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
@@ -102,8 +102,8 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
 
   return (
     <div className="bg-white border border-black/[0.08] shadow-[var(--shadow-elevated)] rounded-2xl p-6 md:p-8">
-      <h3 className="text-[#111827] font-black text-[22px] tracking-[-0.015em] mb-0.5 md:mb-1">Where should we send your report?</h3>
-      <p className="text-[#6B7280] text-xs md:text-sm mb-4 md:mb-6 flex items-start gap-1.5 md:gap-2">
+      <h3 className="text-[#102a2a] font-black text-[22px] tracking-[-0.015em] mb-0.5 md:mb-1">Where should we send your report?</h3>
+      <p className="text-[#5d6d6a] text-xs md:text-sm mb-4 md:mb-6 flex items-start gap-1.5 md:gap-2">
         {jobComplete && (
           <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -172,7 +172,7 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
         </div>
 
         <div>
-          <label htmlFor="lead-phone" className={labelClass}>Phone <span className="text-[#9CA3AF] italic font-normal">(optional)</span></label>
+          <label htmlFor="lead-phone" className={labelClass}>Phone <span className="text-[#8a9694] italic font-normal">(optional)</span></label>
           <input
             id="lead-phone"
             type="tel"
@@ -185,7 +185,7 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
         </div>
 
         <div>
-          <label htmlFor="lead-role" className={labelClass}>Your role <span className="text-[#9CA3AF] italic font-normal">(optional)</span></label>
+          <label htmlFor="lead-role" className={labelClass}>Your role <span className="text-[#8a9694] italic font-normal">(optional)</span></label>
           <select
             id="lead-role"
             value={form.role}
@@ -201,7 +201,7 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
         </div>
 
         <div>
-          <label htmlFor="lead-challenge" className={labelClass}>Biggest challenge <span className="text-[#9CA3AF] italic font-normal">(optional)</span></label>
+          <label htmlFor="lead-challenge" className={labelClass}>Biggest challenge <span className="text-[#8a9694] italic font-normal">(optional)</span></label>
           <select
             id="lead-challenge"
             value={form.challenge}
@@ -226,7 +226,7 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
           </p>
         )}
 
-        <p className="text-[#6B7280] text-[11px] text-center mb-3 flex items-center justify-center gap-1.5">
+        <p className="text-[#5d6d6a] text-[11px] text-center mb-3 flex items-center justify-center gap-1.5">
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
@@ -236,7 +236,7 @@ export default function LeadForm({ jobId, onSubmitted, jobComplete }: Props) {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full bg-[#F5C518] text-black font-bold px-6 py-3.5 md:py-4 rounded-xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-[0.96] focus:outline-none text-[15px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[var(--shadow-glow)] transition-all duration-200"
+          className="w-full bg-[#ff735d] text-black font-bold px-6 py-3.5 md:py-4 rounded-xl hover:bg-yellow-400 hover:scale-[1.02] active:scale-[0.96] focus:outline-none text-[15px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-[var(--shadow-glow)] transition-all duration-200"
         >
           {submitting ? (
             <>

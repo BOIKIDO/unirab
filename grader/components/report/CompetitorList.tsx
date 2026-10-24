@@ -70,9 +70,9 @@ export default function CompetitorList({ competitors, businessName, businessMent
       <div className="fade-up bg-white border border-black/[0.08] shadow-[var(--shadow-elevated)] rounded-2xl p-6 md:p-7 flex flex-col gap-4">
         <div>
           <p className="text-[#8a6a00] text-xs font-semibold tracking-[0.24em] uppercase mb-1">Competitor Analysis</p>
-          <h2 className="text-[#111827] font-black text-xl tracking-[-0.02em]">Your AI search position</h2>
+          <h2 className="text-[#102a2a] font-black text-xl tracking-[-0.02em]">Your AI search position</h2>
         </div>
-        <p className="text-[#9CA3AF] text-sm text-center py-8">No competitors detected across any AI queries for this market.</p>
+        <p className="text-[#8a9694] text-sm text-center py-8">No competitors detected across any AI queries for this market.</p>
       </div>
     )
   }
@@ -81,10 +81,10 @@ export default function CompetitorList({ competitors, businessName, businessMent
     <div className="fade-up bg-white border border-black/[0.08] shadow-[var(--shadow-elevated)] rounded-2xl p-6 md:p-7 flex flex-col gap-4" style={{ animationDelay: '120ms' }}>
       <div>
         <p className="text-[#8a6a00] text-xs font-semibold tracking-[0.24em] uppercase mb-1">Competitor Analysis</p>
-        <h2 className="text-[#111827] font-black text-xl tracking-[-0.02em]">AI search rankings</h2>
-        <p className="text-[#6B7280] text-sm mt-1">
+        <h2 className="text-[#102a2a] font-black text-xl tracking-[-0.02em]">AI search rankings</h2>
+        <p className="text-[#5d6d6a] text-sm mt-1">
           {realRows.length > 0 ? (
-            <>You rank <span className="font-bold text-[#111827]">#{targetPosition}</span> out of {sorted.length} real businesses AI mentions for these queries in your market.</>
+            <>You rank <span className="font-bold text-[#102a2a]">#{targetPosition}</span> out of {sorted.length} real businesses AI mentions for these queries in your market.</>
           ) : (
             <>You&apos;re the only verified real business AI mentions for these queries in your market.</>
           )}
@@ -108,21 +108,21 @@ export default function CompetitorList({ competitors, businessName, businessMent
           const isTied = !row.isTarget && row.mentionCount === targetRow.mentionCount
 
           const rowBg = row.isTarget
-            ? 'bg-[#F5C518]/[0.06]'
+            ? 'bg-[#ff735d]/[0.06]'
             : 'hover:bg-gray-50/70'
           const rowBorder = row.isTarget
-            ? 'border-[#F5C518]/20'
+            ? 'border-[#ff735d]/20'
             : 'border-transparent'
           const rankBg = row.isTarget
-            ? 'bg-[#F5C518] text-black'
+            ? 'bg-[#ff735d] text-black'
             : position === 1
-              ? 'bg-[#F5C518]/15 text-[#8a6a00]'
-              : 'bg-gray-100 text-[#9CA3AF]'
+              ? 'bg-[#ff735d]/15 text-[#8a6a00]'
+              : 'bg-gray-100 text-[#8a9694]'
           const nameStyle = row.isTarget
-            ? 'text-[#111827] font-bold'
-            : 'text-[#374151] font-semibold'
+            ? 'text-[#102a2a] font-bold'
+            : 'text-[#344745] font-semibold'
           const barColor = row.isTarget
-            ? '#F5C518'
+            ? '#ff735d'
             : isAbove ? '#E55353'
             : isTied ? '#E5A000'
             : '#D1D5DB'
@@ -130,7 +130,7 @@ export default function CompetitorList({ competitors, businessName, businessMent
             ? 'text-[#8a6a00] font-bold'
             : isAbove ? 'text-red-500 font-semibold'
             : isTied ? 'text-[#B45309] font-semibold'
-            : 'text-[#9CA3AF]'
+            : 'text-[#8a9694]'
 
           const mentionLabel = `${row.mentionCount} mention${row.mentionCount !== 1 ? 's' : ''}`
           let suffix = ''
@@ -182,7 +182,7 @@ export default function CompetitorList({ competitors, businessName, businessMent
         })}
       </div>
 
-      <p className="text-[10px] text-[#9CA3AF] leading-relaxed">
+      <p className="text-[10px] text-[#8a9694] leading-relaxed">
         Ranked by how many AI answers mentioned each business in this scan. <span className="text-red-500 font-bold">Red</span> = mentioned more than you · <span className="text-[#B45309] font-bold">amber</span> = tied with you.
         {verifiedReal > 0 && <span className="text-green-600 font-bold"> {verifiedReal} competitor{verifiedReal > 1 ? 's' : ''} verified real via Google Places.</span>}
       </p>

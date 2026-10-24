@@ -31,31 +31,31 @@ export default function WhyItMatters() {
       <div className="max-w-6xl mx-auto">
         <div className="mb-16">
           <p className="text-[#8a6a00] text-xs font-normal tracking-[0.24em] uppercase mb-4">Why It Matters</p>
-          <h2 className="font-black text-4xl md:text-5xl text-[#111827] tracking-[-0.02em] leading-tight max-w-2xl">
-            Every month you wait,<br />a competitor locks in<br /><span className="text-[#F5C518]">your next 50 leads.</span>
+          <h2 className="font-black text-4xl md:text-5xl text-[#102a2a] tracking-[-0.02em] leading-tight max-w-2xl">
+            Every month you wait,<br />a competitor locks in<br /><span className="text-[#ff735d]">your next 50 leads.</span>
           </h2>
-          <p className="text-[#6B7280] text-lg mt-4 max-w-xl leading-relaxed">
+          <p className="text-[#5d6d6a] text-lg mt-4 max-w-xl leading-relaxed">
             The contractors who show up in AI answers today will own their market for years. Here&apos;s why it matters right now.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {CARDS.map((card) => (
-            <div key={card.title} className="bg-[#f4f4f0] rounded-2xl p-6 border border-black/[0.06] shadow-[var(--shadow-rest)]">
-              <div className="w-10 h-10 rounded-lg bg-black/[0.04] flex items-center justify-center text-[#111827] mb-5">
+            <div key={card.title} className="bg-[#f3f8f6] rounded-2xl p-6 border border-black/[0.06] shadow-[var(--shadow-rest)]">
+              <div className="w-10 h-10 rounded-lg bg-black/[0.04] flex items-center justify-center text-[#102a2a] mb-5">
                 {card.icon}
               </div>
-              <h3 className="font-bold text-lg text-[#111827] mb-2 tracking-tight">{card.title}</h3>
-              <p className="text-[#6B7280] text-sm leading-relaxed">{card.body}</p>
+              <h3 className="font-bold text-lg text-[#102a2a] mb-2 tracking-tight">{card.title}</h3>
+              <p className="text-[#5d6d6a] text-sm leading-relaxed">{card.body}</p>
             </div>
           ))}
 
           {/* Comparison widget */}
-          <div className="bg-[#111827] rounded-2xl p-6 md:p-7 md:col-span-2 lg:col-span-2 text-white">
+          <div className="bg-[#102a2a] rounded-2xl p-6 md:p-7 md:col-span-2 lg:col-span-2 text-white">
             {/* Header */}
             <div className="flex items-baseline justify-between mb-5">
               <div>
-                <p className="text-[#F5C518] text-[11px] font-semibold tracking-[0.16em] uppercase mb-1">How you compare</p>
+                <p className="text-[#ff735d] text-[11px] font-semibold tracking-[0.16em] uppercase mb-1">How you compare</p>
                 <p className="text-white/25 text-[11px] leading-relaxed">
                   ChatGPT results for &ldquo;best roofer near Austin TX&rdquo;
                 </p>
@@ -88,16 +88,16 @@ export default function WhyItMatters() {
                   <div
                     className={`group flex items-center gap-3 px-3 py-[9px] -mx-3 rounded-lg transition-colors duration-200 ${
                       item.you
-                        ? 'bg-[#F5C518]/[0.06] border border-[#F5C518]/15'
+                        ? 'bg-[#ff735d]/[0.06] border border-[#ff735d]/15'
                         : 'hover:bg-white/[0.04]'
                     }`}
                   >
                     {/* Rank */}
                     <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 border ${
                       item.you
-                        ? 'bg-[#F5C518] border-[#F5C518] text-black'
+                        ? 'bg-[#ff735d] border-[#ff735d] text-black'
                         : i === 0
-                          ? 'border-[#F5C518]/40 text-[#F5C518] bg-[#F5C518]/10'
+                          ? 'border-[#ff735d]/40 text-[#ff735d] bg-[#ff735d]/10'
                           : i === 1
                             ? 'border-white/25 text-white/45 bg-white/5'
                             : 'border-white/12 text-white/30 bg-transparent'
@@ -108,12 +108,12 @@ export default function WhyItMatters() {
                     {/* Name */}
                     <div className="min-w-0 shrink-0" style={{ width: 'clamp(90px, 30%, 160px)' }}>
                       <span className={`text-[12px] font-semibold truncate block ${
-                        item.you ? 'text-[#F5C518]' : 'text-white/65'
+                        item.you ? 'text-[#ff735d]' : 'text-white/65'
                       }`}>
                         {item.name}
                       </span>
                       {item.you && (
-                        <span className="text-[#F5C518]/40 text-[9px] font-medium">this is you →</span>
+                        <span className="text-[#ff735d]/40 text-[9px] font-medium">this is you →</span>
                       )}
                     </div>
 
@@ -132,7 +132,7 @@ export default function WhyItMatters() {
                           background: item.you
                             ? 'linear-gradient(90deg, #EF4444 0%, #f87171 100%)'
                             : i === 0
-                              ? 'linear-gradient(90deg, #F5C518 0%, #e5b800 100%)'
+                              ? 'linear-gradient(90deg, #ff735d 0%, #e5b800 100%)'
                               : i === 1
                                 ? 'linear-gradient(90deg, #d9991c 0%, #c48818 100%)'
                                 : 'linear-gradient(90deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.10) 100%)',
@@ -143,7 +143,7 @@ export default function WhyItMatters() {
 
                     {/* Score */}
                     <span className={`text-[13px] font-bold w-7 text-right tabular-nums shrink-0 ${
-                      item.you ? 'text-red-400' : i === 0 ? 'text-[#F5C518]' : 'text-white/35'
+                      item.you ? 'text-red-400' : i === 0 ? 'text-[#ff735d]' : 'text-white/35'
                     }`}>
                       {item.score}
                     </span>

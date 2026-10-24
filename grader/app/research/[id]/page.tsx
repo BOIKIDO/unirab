@@ -22,7 +22,7 @@ export default async function ReportPage({ params }: Props) {
     }
     return (
       <main className="bg-white min-h-screen flex items-center justify-center">
-        <p className="text-[#6B7280] text-lg">Report not found.</p>
+        <p className="text-[#5d6d6a] text-lg">Report not found.</p>
       </main>
     )
   }
@@ -37,10 +37,10 @@ export default async function ReportPage({ params }: Props) {
       {/* Nav */}
       <nav className="bg-white border-b border-black/[0.06] px-4 md:px-12 py-4 md:py-5">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <img src="/faaxa-logo.svg" alt="Faaxa" className="w-24 md:w-32 h-auto" />
+<span className="inline-flex items-baseline" style={{fontStyle:'italic', fontWeight:900, fontSize:26, letterSpacing:'-1.2px', color:'#102a2a'}}>UNI<span style={{color:'#ff735d'}}>RAB</span><span style={{color:'#ff735d', fontSize:'0.72em', verticalAlign:'super'}}>&bull;</span></span>
           <a
             href={process.env.NEXT_PUBLIC_CALENDLY_URL ?? '#'}
-            className="bg-[#F5C518] text-black font-bold px-4 py-2 md:px-5 md:py-2.5 rounded-full text-xs md:text-sm hover:bg-yellow-400 transition-all"
+            className="bg-[#ff735d] text-black font-bold px-4 py-2 md:px-5 md:py-2.5 rounded-full text-xs md:text-sm hover:bg-yellow-400 transition-all"
           >
             Book a Free Call
           </a>
@@ -90,8 +90,8 @@ export default async function ReportPage({ params }: Props) {
 
       {/* Trust bar — social proof for American market */}
       <div className="bg-[#FAFAF7] border-y border-black/[0.05] px-4 py-5 text-center">
-        <p className="text-[#6B7280] text-[13px]">
-          <span className="text-[#111827] font-black">200+ contractors</span> across the U.S. have checked their AI visibility with Faaxa.
+        <p className="text-[#5d6d6a] text-[13px]">
+          <span className="text-[#102a2a] font-black">200+ contractors</span> across the U.S. have checked their AI visibility with Faaxa.
           Roofers, plumbers, electricians, and HVAC teams in 1,400+ cities.
         </p>
       </div>
@@ -124,7 +124,7 @@ export default async function ReportPage({ params }: Props) {
       {/* Share row */}
       <div className="bg-white border-t border-black/[0.06] px-4 py-6">
         <div className="max-w-6xl mx-auto text-center">
-          <p className="text-[#9CA3AF] text-[11px] font-semibold mb-3">Share this report</p>
+          <p className="text-[#8a9694] text-[11px] font-semibold mb-3">Share this report</p>
           <div className="flex items-center justify-center gap-3 flex-wrap">
             <a
               href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
@@ -137,7 +137,7 @@ export default async function ReportPage({ params }: Props) {
             </a>
             <a
               href={`mailto:?subject=Our%20AI%20visibility%20score%20for%20${encodeURIComponent(job.business_name)}&body=Check%20out%20our%20free%20AI%20visibility%20report%20from%20Faaxa%3A%20${encodeURIComponent(shareUrl)}`}
-              className="inline-flex items-center gap-1.5 bg-white border border-black/[0.08] rounded-full px-4 py-2 text-[#111827] text-xs font-semibold hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-1.5 bg-white border border-black/[0.08] rounded-full px-4 py-2 text-[#102a2a] text-xs font-semibold hover:bg-gray-50 transition-colors"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
               Email Report
@@ -148,7 +148,7 @@ export default async function ReportPage({ params }: Props) {
 
       {/* Report footer */}
       <div className="bg-white border-t border-black/[0.06] px-4 py-4 text-center">
-        <p className="text-[#9CA3AF] text-[10px]">
+        <p className="text-[#8a9694] text-[10px]">
           Report for {job.business_name} in {job.location_city}, {job.location_state} · Generated {new Date(job.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} · AI Visibility Grader by Faaxa
         </p>
       </div>

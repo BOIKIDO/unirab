@@ -43,11 +43,11 @@ export default function HowItWorks() {
   }, [paused])
 
   return (
-    <section className="bg-[#f4f4f0] py-24 px-6 md:px-12 lg:px-20">
+    <section className="bg-[#f3f8f6] py-24 px-6 md:px-12 lg:px-20">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <p className="text-[#F5C518] text-xs font-normal tracking-[0.24em] uppercase mb-4">How It Works</p>
-          <h2 className="font-black text-4xl md:text-5xl text-[#111827] tracking-[-0.02em] leading-tight">
+          <p className="text-[#ff735d] text-xs font-normal tracking-[0.24em] uppercase mb-4">How It Works</p>
+          <h2 className="font-black text-4xl md:text-5xl text-[#102a2a] tracking-[-0.02em] leading-tight">
             From business name<br />to full report in 90 seconds.
           </h2>
         </div>
@@ -65,21 +65,21 @@ export default function HowItWorks() {
                 onMouseEnter={() => setActiveIndex(i)}
                 className={`relative rounded-2xl p-6 transition-all duration-500 cursor-pointer ${
                   emphasis
-                    ? 'bg-[#111827] text-white shadow-[var(--shadow-elevated)] -translate-y-1'
+                    ? 'bg-[#102a2a] text-white shadow-[var(--shadow-elevated)] -translate-y-1'
                     : 'bg-[#fafaf8] border border-black/[0.06] shadow-[var(--shadow-rest)] hover:border-black/[0.12] hover:shadow-[var(--shadow-elevated)]'
                 }`}
               >
                 <div className="flex items-start justify-between mb-5">
                   <div
                     className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-500 ${
-                      emphasis ? 'bg-[#F5C518] text-black' : 'bg-black/[0.04] text-[#111827]'
+                      emphasis ? 'bg-[#ff735d] text-black' : 'bg-black/[0.04] text-[#102a2a]'
                     }`}
                   >
                     {step.icon}
                   </div>
                   <span
                     className={`text-[11px] font-bold tracking-[0.18em] transition-colors duration-500 ${
-                      emphasis ? 'text-[#F5C518]' : 'text-black/[0.25]'
+                      emphasis ? 'text-[#ff735d]' : 'text-black/[0.25]'
                     }`}
                   >
                     {step.number}
@@ -87,14 +87,14 @@ export default function HowItWorks() {
                 </div>
                 <h3
                   className={`font-bold text-lg mb-2 tracking-tight transition-colors duration-500 ${
-                    emphasis ? 'text-white' : 'text-[#111827]'
+                    emphasis ? 'text-white' : 'text-[#102a2a]'
                   }`}
                 >
                   {step.title}
                 </h3>
                 <p
                   className={`text-sm leading-relaxed transition-colors duration-500 ${
-                    emphasis ? 'text-white/70' : 'text-[#6B7280]'
+                    emphasis ? 'text-white/70' : 'text-[#5d6d6a]'
                   }`}
                 >
                   {step.body}

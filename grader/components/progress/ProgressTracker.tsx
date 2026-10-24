@@ -63,7 +63,7 @@ export default function ProgressTracker({ jobId, onComplete }: Props) {
                 done
                   ? 'bg-[#22C55E]'
                   : active
-                  ? 'bg-[#F5C518]'
+                  ? 'bg-[#ff735d]'
                   : 'bg-gray-100 border border-black/[0.08]'
               }`}
             >
@@ -80,7 +80,7 @@ export default function ProgressTracker({ jobId, onComplete }: Props) {
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-1">
-                <span className={`text-xs font-semibold ${done || active ? 'text-[#111827]' : 'text-[#9CA3AF]'}`}>
+                <span className={`text-xs font-semibold ${done || active ? 'text-[#102a2a]' : 'text-[#8a9694]'}`}>
                   {step.label}
                 </span>
                 <span className={`text-[10px] font-bold ml-2 shrink-0 ${
@@ -94,7 +94,7 @@ export default function ProgressTracker({ jobId, onComplete }: Props) {
                   className="h-full rounded-full transition-all duration-500"
                   style={{
                     width: done ? '100%' : active ? `${Math.min(100, ((progress - (i === 1 ? 15 : i === 2 ? 80 : i === 3 ? 95 : 0)) / (i === 1 ? 65 : i === 2 ? 15 : i === 3 ? 5 : 15)) * 100)}%` : '0%',
-                    background: done ? '#22C55E' : '#F5C518',
+                    background: done ? '#22C55E' : '#ff735d',
                   }}
                 />
               </div>
@@ -104,8 +104,8 @@ export default function ProgressTracker({ jobId, onComplete }: Props) {
       })}
 
       <div className="pt-1 flex items-center justify-between">
-        <span className="text-[#9CA3AF] text-[10px]">{elapsed}s elapsed</span>
-        <span className="text-[#6B7280] text-[10px]">{progress}% complete</span>
+        <span className="text-[#8a9694] text-[10px]">{elapsed}s elapsed</span>
+        <span className="text-[#5d6d6a] text-[10px]">{progress}% complete</span>
       </div>
     </div>
   )
