@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { checkMailbox } from '../lib/mail-watch.js';
 import { makePortalToken } from './verify-magic-link.js';
+import CHEAT_SHEET_HTML from '../lib/cheat-sheet.js';
 
 const sign = (payload) => createHmac('sha256', process.env.MAGIC_LINK_SECRET).update(payload).digest('base64url');
 const safeEqual = (a, b) => a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
