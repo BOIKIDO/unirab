@@ -153,6 +153,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var suggestBox=document.getElementById('vc-suggest');
     if(!form||!bizInput||!suggestBox){return;}
     document.body.setAttribute('data-vc-init','1');
+    // Warm the autocomplete lambdas (cold starts would delay the first suggestion).
+    fetch('/api/visibility-start?q=pl').catch(function(){});
     var timer=null, items=[];
 
     function hide(){suggestBox.hidden=true;suggestBox.innerHTML='';items=[];}
