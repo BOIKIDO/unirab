@@ -1,0 +1,48 @@
+<?xml version="1.0" standalone="no"?>
+<svg id="logo-light" xmlns="http://www.w3.org/2000/svg" viewBox="180 150 440 170">
+                <defs>
+                    <style>
+                        /* Importing heavy geometric and light weights for the typography */
+                        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&amp;display=swap');
+                        
+                        .bg-light { 
+                            fill: #F7F7F4; /* Clean, solid off-white background */
+                        }
+                        .main-text-light {
+                            font-family: 'Montserrat', sans-serif;
+                            font-size: 130px;
+                            font-weight: 900;
+                            fill: #181818; /* Deep charcoal gray */
+                            text-anchor: middle;
+                            letter-spacing: -3px; /* Tight tracking for the main mark */
+                        }
+                        .sub-text-light {
+                            font-family: 'Montserrat', sans-serif;
+                            font-size: 18px;
+                            font-weight: bold;
+                            fill: #181818;
+                            text-anchor: middle;
+                            letter-spacing: 8px;
+                        }
+                    </style>
+
+                    <!-- SVG Mask defining the razor-thin negative space arc -->
+                    <mask id="arc-mask-light">
+                        <!-- The white rectangle makes the whole text visible by default -->
+                        <rect x="0" y="0" width="800" height="500" fill="white"/>
+                        <!-- The black path masks out (hides) a razor-thin, elegant curve through the word -->
+                        <path d="M 160 230 Q 400 210 640 230" fill="none" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                    </mask>
+                </defs>
+
+                <!-- Base Canvas (Background removed for transparency) -->
+
+                <!-- Main Typography wrapped in the negative space mask -->
+                <g mask="url(#arc-mask-light)">
+                    <text x="400" y="260" class="main-text-light">Faaxa</text>
+                </g>
+
+                <!-- Sub Typography -->
+                <text x="400" y="302" class="sub-text-light">DIGITAL AMPLIFICATION</text>
+                
+            </svg>
