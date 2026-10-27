@@ -20,7 +20,7 @@ export async function GET(
 
   // Estimate progress based on elapsed time (cosmetic — real status drives redirect)
   const elapsed = Date.now() - new Date(data.created_at).getTime()
-  const estimatedMs = 75_000 // 75s average
+  const estimatedMs = 180_000 // chunked scan averages ~3 minutes
   const progress = data.status === 'complete'
     ? 100
     : data.status === 'failed'

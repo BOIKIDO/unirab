@@ -8,7 +8,12 @@ import { Client } from '@upstash/qstash'
 // import { rateLimit } from '@/lib/ratelimit'
 import { runResearch } from '@/workers/research'
 
-function getQstash() { return new Client({ token: process.env.QSTASH_TOKEN! }) }
+function getQstash() {
+  return new Client({
+    token: process.env.QSTASH_TOKEN!,
+    baseUrl: process.env.QSTASH_URL,
+  })
+}
 
 function isLocalDev() {
   const url = process.env.NEXT_PUBLIC_SITE_URL ?? ''
@@ -82,12 +87,15 @@ export async function POST(req: NextRequest) {
         console.error(`[research/start] worker error for ${job.id}:`, err)
       )
     } else {
-      const workerUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/api/worker/research`
+      const rawBase = (process.env.NEXT_PUBLIC_SITE_URL ?? '').replace(/\/+$/, '')
+      const appBase = rawBase.endsWith('/grader') ? rawBase : `${rawBase}/grader`
+      const workerUrl = `${appBase}/api/worker/research`
       try {
         await getQstash().publishJSON({
           url: workerUrl,
           body: { jobId: job.id },
           retries: 2,
+          timeout: '55s',
         })
       } catch (qstashErr) {
         // QStash unavailable: run the worker in-process as a best-effort fallback.

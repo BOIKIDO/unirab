@@ -2,7 +2,7 @@ import { getSupabaseAdmin } from '@/lib/supabase'
 import { queryGeminiWithSearch } from '@/lib/gemini'
 import { queryOpenAISearch } from '@/lib/openai'
 import { queryDeepSeek } from '@/lib/deepseek'
-import { analyzeResponse, aggregateCompetitors } from '@/lib/parser'
+import { analyzeResponse, aggregateCompetitors, normalizeCompetitorName } from '@/lib/parser'
 import { calculateScores, PlatformResult } from '@/lib/scoring'
 import { generateInsights } from '@/lib/insights'
 import { verifyJobCompetitors } from '@/lib/verifier'
@@ -307,8 +307,8 @@ async function runResearchInner(jobId: string): Promise<void> {
   // Pre-render AI content — 15s hard deadline, never block job completion
   const preRenderResult = await Promise.race([
     Promise.allSettled([
-      generateDescription(job.business_name, job.primary_service ?? '', keywords, cityLocation, stateLocation, scores.overall),
-      generateInsightsForJob(jobId, job.business_name, job.primary_service ?? '', keywords, cityLocation, stateLocation, scores),
+      generateDescription(job.business_name, job.primary_service ?? '', keywords, job.location_city, job.location_state, scores.overall),
+      generateInsightsForJob(jobId, job.business_name, job.primary_service ?? '', keywords, job.location_city, job.location_state, scores),
     ]),
     new Promise<null>((resolve) => setTimeout(() => resolve(null), 20000)),
   ])
@@ -348,4 +348,308 @@ async function runResearchInner(jobId: string): Promise<void> {
   verifyJobCompetitors(jobId, job.location_city, job.location_state).catch((err) =>
     console.error(`[verifier] background verification failed for ${jobId}:`, err)
   )
+}
+
+// ---------------------------------------------------------------------------
+// Chunked worker for production (Vercel Hobby caps a function at 60s).
+// Each QStash invocation performs one bounded phase:
+//   1. search  - run a small batch of AI queries, store raw responses
+//   2. analysis - parse a batch of stored responses + queue competitor rows
+//   3. finalize - aggregate competitors, score, generate insights, mark complete
+// State lives entirely in Supabase, so retries resume instead of starting over.
+// ---------------------------------------------------------------------------
+
+export const SEARCH_CHUNK = 12
+export const ANALYSIS_CHUNK = 12
+const STEP_CONCURRENCY = 6
+// mention_count doubles as a "not analyzed yet" marker (-1) and as the
+// first-mention flag (+100). Nothing in the report displays this column.
+const FIRST_MENTION_MARKER = 100
+
+interface PlannedQuery {
+  platform: Platform
+  keyword: string
+  locationType: 'city' | 'state'
+  location: string
+  prompt: string
+}
+
+function buildQueryPlan(job: {
+  business_name: string
+  location_city: string
+  location_state: string
+  keywords?: string[] | null
+}): PlannedQuery[] {
+  const keywords: string[] = job.keywords ?? []
+  const cityLocation = `${job.location_city}, ${job.location_state}`
+  const stateLocation = job.location_state
+  const plan: PlannedQuery[] = []
+
+  for (const keyword of keywords) {
+    for (const platform of PLATFORMS) {
+      plan.push({ platform, keyword, locationType: 'city', location: cityLocation, prompt: buildPrompt(keyword, cityLocation) })
+      plan.push({ platform, keyword, locationType: 'state', location: stateLocation, prompt: buildPrompt(keyword, stateLocation) })
+    }
+  }
+  for (const platform of PLATFORMS) {
+    plan.push({ platform, keyword: 'business_name', locationType: 'city', location: cityLocation, prompt: job.business_name })
+    plan.push({ platform, keyword: 'business_name', locationType: 'state', location: stateLocation, prompt: `${job.business_name} ${stateLocation}` })
+  }
+  return plan
+}
+
+function queryKey(q: {
+  platform: string
+  keyword: string
+  location_type?: string
+  locationType?: string
+}): string {
+  return `${q.platform}|${q.keyword}|${q.location_type ?? q.locationType}`
+}
+
+async function runConcurrent<T, R>(items: T[], size: number, fn: (item: T) => Promise<R>): Promise<R[]> {
+  const out: R[] = []
+  for (let i = 0; i < items.length; i += size) {
+    const settled = await Promise.allSettled(items.slice(i, i + size).map(fn))
+    for (const s of settled) if (s.status === 'fulfilled') out.push(s.value)
+  }
+  return out
+}
+
+export async function runResearchStep(jobId: string): Promise<{ complete: boolean; phase: string; progressed: number }> {
+  const db = getSupabaseAdmin()
+  const { data: job, error } = await db.from('research_jobs').select('*').eq('id', jobId).single()
+  if (error || !job) throw new Error(`job ${jobId} not found`)
+  if (job.status === 'complete') return { complete: true, phase: 'complete', progressed: 0 }
+  if (job.status === 'pending') {
+    await db.from('research_jobs').update({ status: 'running' }).eq('id', jobId)
+  }
+
+  const plan = buildQueryPlan(job)
+  const { data: existingRows, error: rowsErr } = await db
+    .from('query_results')
+    .select('platform, keyword, location_type')
+    .eq('job_id', jobId)
+  if (rowsErr) throw new Error(`query_results read failed: ${rowsErr.message}`)
+
+  const existing = new Set((existingRows ?? []).map(queryKey))
+  const missing = plan.filter((q) => !existing.has(queryKey(q)))
+
+  if (missing.length > 0) {
+    const chunk = missing.slice(0, SEARCH_CHUNK)
+    const results = await runConcurrent(chunk, STEP_CONCURRENCY, async (q) => {
+      try {
+        const responseText = await runPlatformQuery(q.platform, q.prompt)
+        return { q, responseText }
+      } catch (err) {
+        console.error(`[step] ${q.platform}/${q.locationType}/${q.keyword} failed:`, err)
+        return { q, responseText: '' }
+      }
+    })
+
+    if (results.length > 0) {
+      const { error: insErr } = await db.from('query_results').insert(
+        results.map(({ q, responseText }) => ({
+          job_id: jobId,
+          platform: q.platform,
+          keyword: q.keyword,
+          location_type: q.locationType,
+          query_text: q.prompt,
+          response_text: responseText,
+          mentioned: false,
+          mention_count: -1,
+        }))
+      )
+      if (insErr) throw new Error(`query_results insert failed: ${insErr.message}`)
+    }
+    return { complete: false, phase: 'search', progressed: results.length }
+  }
+
+  const { data: unanalyzed, error: anErr } = await db
+    .from('query_results')
+    .select('id, platform, keyword, location_type, response_text')
+    .eq('job_id', jobId)
+    .eq('mention_count', -1)
+    .limit(ANALYSIS_CHUNK)
+  if (anErr) throw new Error(`analysis read failed: ${anErr.message}`)
+
+  if (unanalyzed && unanalyzed.length > 0) {
+    const analyzed = await runConcurrent(unanalyzed, STEP_CONCURRENCY, async (row) => {
+      const analysis = await analyzeResponse(row.response_text ?? '', job.business_name)
+      return { row, analysis }
+    })
+
+    let updated = 0
+    for (const { row, analysis } of analyzed) {
+      const encoded = analysis.mention.mentioned
+        ? (analysis.mention.isFirstMention
+            ? FIRST_MENTION_MARKER + analysis.mention.mentionCount
+            : analysis.mention.mentionCount)
+        : 0
+
+      const { error: updErr } = await db
+        .from('query_results')
+        .update({ mentioned: analysis.mention.mentioned, mention_count: encoded })
+        .eq('id', row.id)
+      if (updErr) {
+        console.error('[step] query_result update failed:', updErr)
+        continue
+      }
+      updated++
+
+      // Store one row per competitor mention. Finalize aggregates these into
+      // the top-10 table the report reads.
+      const seen = new Set<string>()
+      const compRows: Array<Record<string, string | number>> = []
+      for (const comp of analysis.competitors) {
+        const key = normalizeCompetitorName(comp.name)
+        if (!key || key.length < 3 || seen.has(key)) continue
+        seen.add(key)
+        compRows.push({
+          job_id: jobId,
+          competitor_name: comp.name.trim(),
+          mention_count: 1,
+          above_count: comp.above ? 1 : 0,
+          below_count: comp.above ? 0 : 1,
+        })
+      }
+      if (compRows.length > 0) {
+        const { error: compErr } = await db.from('competitors').insert(compRows)
+        if (compErr) console.error('[step] competitor insert failed:', compErr)
+      }
+    }
+    return { complete: false, phase: 'analysis', progressed: updated }
+  }
+
+  await finalizeResearch(db, job)
+  return { complete: true, phase: 'finalize', progressed: 1 }
+}
+
+async function finalizeResearch(
+  db: ReturnType<typeof getSupabaseAdmin>,
+  job: {
+    id: string
+    business_name: string
+    primary_service?: string | null
+    location_city: string
+    location_state: string
+    keywords?: string[] | null
+  }
+): Promise<void> {
+  const jobId = job.id
+  const keywords: string[] = job.keywords ?? []
+  const cityLocation = `${job.location_city}, ${job.location_state}`
+  const stateLocation = job.location_state
+
+  const { data: rows } = await db
+    .from('query_results')
+    .select('platform, keyword, location_type, mentioned, mention_count')
+    .eq('job_id', jobId)
+
+  const platformResults: Record<Platform, PlatformResult> = {
+    chatgpt: { mentioned: false, mentionCount: 0, isFirstMention: false },
+    gemini: { mentioned: false, mentionCount: 0, isFirstMention: false },
+  }
+  for (const row of rows ?? []) {
+    if (!row.mentioned) continue
+    const target = platformResults[row.platform as Platform]
+    if (!target) continue
+    const encoded = Math.max(0, Number(row.mention_count) || 0)
+    const isFirst = encoded >= FIRST_MENTION_MARKER
+    target.mentioned = true
+    target.mentionCount += isFirst ? encoded - FIRST_MENTION_MARKER : encoded
+    if (isFirst) target.isFirstMention = true
+  }
+
+  const scores = calculateScores({
+    chatgpt: platformResults.chatgpt,
+    gemini: platformResults.gemini,
+    totalKeywords: keywords.length,
+  })
+
+  // Aggregate the per-response competitor rows written during analysis.
+  const { data: rawComps } = await db
+    .from('competitors')
+    .select('competitor_name, mention_count, above_count, below_count')
+    .eq('job_id', jobId)
+
+  const buckets = new Map<string, { display: string; count: number; aboveCount: number; belowCount: number }>()
+  for (const c of rawComps ?? []) {
+    const key = normalizeCompetitorName(c.competitor_name)
+    if (!key || key.length < 3) continue
+    const existing = buckets.get(key)
+    if (!existing) {
+      buckets.set(key, {
+        display: c.competitor_name.trim(),
+        count: c.mention_count,
+        aboveCount: c.above_count,
+        belowCount: c.below_count,
+      })
+    } else {
+      existing.count += c.mention_count
+      existing.aboveCount += c.above_count
+      existing.belowCount += c.below_count
+      if (c.competitor_name.trim().length > existing.display.length) {
+        existing.display = c.competitor_name.trim()
+      }
+    }
+  }
+
+  const top10 = Array.from(buckets.values())
+    .map((b) => ({ name: b.display, count: b.count, aboveCount: b.aboveCount, belowCount: b.belowCount }))
+    .sort((a, b) => b.aboveCount - a.aboveCount)
+    .slice(0, 10)
+
+  await db.from('competitors').delete().eq('job_id', jobId)
+  if (top10.length > 0) {
+    const { error: compErr } = await db.from('competitors').insert(
+      top10.map((c) => ({
+        job_id: jobId,
+        competitor_name: c.name,
+        mention_count: c.count,
+        above_count: c.aboveCount,
+        below_count: c.belowCount,
+      }))
+    )
+    if (compErr) console.error('[step] final competitor insert failed:', compErr)
+  }
+
+  const preRenderResult = await Promise.race([
+    Promise.allSettled([
+      generateDescription(job.business_name, job.primary_service ?? '', keywords, job.location_city, job.location_state, scores.overall),
+      generateInsightsForJob(jobId, job.business_name, job.primary_service ?? '', keywords, job.location_city, job.location_state, scores),
+    ]),
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), 20000)),
+  ])
+
+  const descResult = preRenderResult?.[0] ?? { status: 'rejected' as const, reason: 'timeout' }
+  const insightsResult = preRenderResult?.[1] ?? { status: 'rejected' as const, reason: 'timeout' }
+  const descriptionText = descResult.status === 'fulfilled' ? descResult.value.text : null
+  const descriptionCategory = descResult.status === 'fulfilled' ? descResult.value.category : null
+  const insightsData = insightsResult.status === 'fulfilled' ? insightsResult.value : null
+
+  const baseUpdate: Record<string, unknown> = {
+    status: 'complete',
+    score_overall: scores.overall,
+    score_chatgpt: scores.chatgpt,
+    score_gemini: scores.gemini,
+  }
+  if (descriptionText) baseUpdate.description_text = descriptionText
+  if (descriptionCategory) baseUpdate.description_category = descriptionCategory
+  if (insightsData) {
+    baseUpdate.insights_summary = insightsData.summary
+    baseUpdate.insights_data = insightsData
+  }
+
+  const { error: updErr } = await db.from('research_jobs').update(baseUpdate).eq('id', jobId)
+  if (updErr) console.error('[step] final job update failed:', updErr.message)
+
+  // Verification is quick (10 Places lookups); await it with a cap so the
+  // result is saved before this function returns and freezes.
+  await Promise.race([
+    verifyJobCompetitors(jobId, job.location_city, job.location_state).catch((err) =>
+      console.error(`[verifier] verification failed for ${jobId}:`, err)
+    ),
+    new Promise((resolve) => setTimeout(resolve, 15000)),
+  ])
 }
