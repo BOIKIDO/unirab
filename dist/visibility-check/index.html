@@ -331,17 +331,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var website=normalizeWebsite(websiteInput&&websiteInput.value);
       var loc=parseCityState(cityRaw);
       if(!business){statusEl.className='vc-status error';statusEl.textContent='Please add your business name.';return;}
-      if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){statusEl.className='vc-status error';statusEl.textContent='Please add your email so we can send the report.';if(emailInput)emailInput.focus();return;}
 
       if(website){
         var scan=await startScan({business:business,website:website,city:loc.city,state:loc.state,email:email,btn:submitBtn,busy:'Reading your website\u2026',idle:selectedOther?'Run my free scan':'Get my free report'});
         if(scan.ok)return;
-        if(scan.reason==='website-unavailable'||scan.reason==='location-required'){
+        if(scan.reason==='location-required'){
           statusEl.className='vc-status error';
-          statusEl.textContent=scan.reason==='location-required'?'Add your city and state so we can run the local AI search.':'We could not read that website. Check the URL and try again.';
+          statusEl.textContent='Add your city and state so we can run the local AI search.';
+          return;
+        }
+        if(scan.reason==='website-unavailable'&&!email){
+          statusEl.className='vc-status error';
+          statusEl.textContent='We could not read that website. Check the URL, or add your email and we will prepare the report manually.';
           return;
         }
       }
+
+      if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){statusEl.className='vc-status error';statusEl.textContent='Please add your email so we can send the report.';if(emailInput)emailInput.focus();return;}
 
       submitBtn.disabled=true;submitBtn.textContent='Sending\u2026';
       try{
