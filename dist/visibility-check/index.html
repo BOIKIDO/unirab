@@ -79,6 +79,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .vc-suggest button:last-child{border-bottom:0}
 .vc-suggest button:hover,.vc-suggest button.active{background:var(--mint)}
 .vc-suggest small{display:block;color:#7b8986;font-size:12px;margin-top:2px}
+.vc-suggest button.vc-other{border-top:1px solid #e3ece9;background:#fbfdfc}
+.vc-suggest button.vc-other b{color:var(--deep)}
+.vc-suggest button.vc-other:hover{background:var(--mint)}
 .vc-form{position:relative}
 </style>
 </head><body data-plan="">
@@ -151,27 +154,93 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var statusEl=document.getElementById('vc-status');
     var bizInput=document.getElementById('vc-business');
     var suggestBox=document.getElementById('vc-suggest');
+    var emailInput=document.getElementById('vc-email');
+    var cityInput=document.getElementById('vc-city');
+    var websiteInput=document.getElementById('vc-website');
+    var submitBtn=document.getElementById('vc-submit');
     if(!form||!bizInput||!suggestBox){return;}
     document.body.setAttribute('data-vc-init','1');
     // Warm the autocomplete lambdas (cold starts would delay the first suggestion).
     fetch('/api/visibility-start?q=pl').catch(function(){});
-    var timer=null, items=[];
+    var timer=null, items=[], selectedOther=false;
 
     function hide(){suggestBox.hidden=true;suggestBox.innerHTML='';items=[];}
 
-    function render(){
-      if(!items.length){hide();return;}
-      var esc=function(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
-      suggestBox.innerHTML=items.map(function(s,i){
+    function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+    function renderSuggestions(){
+      var html=items.map(function(s,i){
         return '<button type="button" data-i="'+i+'"><b style="font-weight:800">'+esc(s.main)+'</b><small>'+esc(s.full)+'</small></button>';
       }).join('');
+      html+='<button type="button" class="vc-other" data-other="1"><b>My business isn\'t listed</b><small>Enter your website and we\'ll scan it directly</small></button>';
+      suggestBox.innerHTML=html;
       suggestBox.hidden=false;
+    }
+
+    function revealExtra(focusId,message){
+      extra.hidden=false;
+      if(websiteInput){websiteInput.placeholder=selectedOther?'Your website URL (required)':'Website (recommended)';}
+      if(submitBtn){submitBtn.textContent=selectedOther?'Run my free scan':'Get my free report';}
+      var target=document.getElementById(focusId||(selectedOther?'vc-website':'vc-email'));
+      if(target){try{target.focus();}catch(e){}}
+      if(message){statusEl.className='vc-status';statusEl.textContent=message;}
+    }
+
+    function parseCityState(raw){
+      var out={city:'',state:''};
+      raw=String(raw||'').trim();
+      if(!raw)return out;
+      var m=raw.match(/^(.+?)\s*,\s*([A-Za-z]{2})$/);
+      if(m){out.city=m[1].trim();out.state=m[2].toUpperCase();}
+      else{out.city=raw;}
+      return out;
+    }
+
+    function normalizeWebsite(raw){
+      raw=String(raw||'').trim();
+      if(!raw)return '';
+      if(!/^https?:\/\//i.test(raw))raw='https://'+raw;
+      return raw;
+    }
+
+    function startScan(opts){
+      var payload={business:opts.business};
+      if(opts.website)payload.website=opts.website;
+      if(opts.city)payload.city=opts.city;
+      if(opts.state)payload.state=opts.state;
+      if(opts.email)payload.email=opts.email;
+      opts.btn.disabled=true;
+      opts.btn.textContent=opts.busy;
+      return fetch('/api/visibility-start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+        .then(function(r){return r.json().catch(function(){return {};});})
+        .then(function(res){
+          if(res&&res.ok&&res.redirect){
+            statusEl.className='vc-status ok';
+            statusEl.textContent='Scan started - taking you to your live report\u2026';
+            if(window.fbq){fbq('track','Lead');}
+            if(window.gtag){gtag('event','generate_lead',{event_category:'visibility_check'});}
+            setTimeout(function(){location.assign(res.redirect);},600);
+            return {ok:true};
+          }
+          opts.btn.disabled=false;
+          opts.btn.textContent=opts.idle;
+          return {ok:false,reason:(res&&res.reason)||'scan-unavailable'};
+        })
+        .catch(function(){
+          opts.btn.disabled=false;
+          opts.btn.textContent=opts.idle;
+          return {ok:false,reason:'network'};
+        });
     }
 
     bizInput.addEventListener('input',function(){
       clearTimeout(timer);
+      selectedOther=false;
       var q=bizInput.value.trim();
       if(q.length<2){hide();return;}
+      items=[];
+      // "My business isn't listed" is always available, even before Places answers.
+      renderSuggestions();
       timer=setTimeout(function(){
         fetch('/api/visibility-start?q='+encodeURIComponent(q))
           .then(function(r){return r.json();})
@@ -180,20 +249,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               var sf=p.structured_formatting||{};
               return {main:sf.main_text||p.description||'',full:p.description||''};
             });
-            render();
+            renderSuggestions();
           })
-          .catch(function(e){hide();});
+          .catch(function(){items=[];renderSuggestions();});
       },250);
     });
 
     suggestBox.addEventListener('click',function(e){
+      if(e.target.closest('[data-other]')){
+        selectedOther=true;
+        hide();
+        revealExtra('vc-website','Add your website URL, then run the free scan. We read the services listed there and test them in AI.');
+        return;
+      }
       var b=e.target.closest('button');
       if(!b)return;
       var s=items[Number(b.getAttribute('data-i'))];
       if(!s)return;
+      selectedOther=false;
       bizInput.value=s.main;
       hide();
       bizInput.focus();
+      if(!extra.hidden&&submitBtn){submitBtn.textContent='Get my free report';}
     });
 
     document.addEventListener('click',function(e){
@@ -205,51 +282,82 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var business=bizInput.value.trim();
       if(!business){statusEl.className='vc-status error';statusEl.textContent='Please enter your business name.';return;}
       var btn=document.getElementById('vc-first-btn');
-      btn.disabled=true;btn.textContent='Looking up your business\u2026';
-      var started=false;
-      try{
-        var r=await fetch('/api/visibility-start',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({business:business})});
-        var res=await r.json().catch(function(){return {};});
-        if(res.ok&&res.redirect){
-          started=true;
-          statusEl.className='vc-status ok';
-          statusEl.textContent='Scan started - taking you to your live report\u2026';
-          if(window.fbq){fbq('track','Lead');}
-          if(window.gtag){gtag('event','generate_lead',{event_category:'visibility_check'});}
-          setTimeout(function(){location.assign(res.redirect);},600);
+      var website=normalizeWebsite(websiteInput&&websiteInput.value);
+      var cityRaw=cityInput?cityInput.value.trim():'';
+      var email=emailInput?emailInput.value.trim():'';
+      var loc=parseCityState(cityRaw);
+
+      if(selectedOther||(!extra.hidden&&website)){
+        if(!website){
+          revealExtra('vc-website','Add your website URL and we will scan it directly.');
+          statusEl.className='vc-status error';
+          return;
         }
-      }catch(err){}
-      if(!started){
-        btn.disabled=false;
+        var scan=await startScan({business:business,website:website,city:loc.city,state:loc.state,email:email,btn:btn,busy:'Reading your website\u2026',idle:'Check my visibility'});
+        if(scan.ok)return;
+        if(scan.reason==='location-required'){
+          revealExtra('vc-city','Add your city and state so we can ask AI the right local questions.');
+          statusEl.className='vc-status error';
+          return;
+        }
+        if(scan.reason==='website-unavailable'){
+          revealExtra('vc-website','We could not read that website. Check the URL, or add your email and we will prepare the report manually.');
+          statusEl.className='vc-status error';
+          return;
+        }
+        revealExtra('vc-email','The live scan is unavailable right now. Add your email and we will send your report within 24 hours.');
         btn.textContent='Enter your email below';
-        extra.hidden=false;
-        document.getElementById('vc-email').focus();
+        statusEl.className='vc-status error';
+        return;
       }
+
+      var res=await startScan({business:business,btn:btn,busy:'Looking up your business\u2026',idle:'Check my visibility'});
+      if(res.ok)return;
+      if(res.reason==='not-found'||res.reason==='details-missing'||res.reason==='incomplete-placement'||res.reason==='no-services'){
+        selectedOther=true;
+        revealExtra('vc-website','We could not find that business in Google. Add your website and we will scan it directly.');
+        statusEl.className='vc-status error';
+        return;
+      }
+      revealExtra('vc-email','The live scan is unavailable right now. Add your email and we will send your report within 24 hours.');
+      btn.textContent='Enter your email below';
+      statusEl.className='vc-status error';
     });
 
-    document.getElementById('vc-submit').addEventListener('click',async function(){
+    submitBtn.addEventListener('click',async function(){
       var business=bizInput.value.trim();
-      var email=document.getElementById('vc-email').value.trim();
-      var city=document.getElementById('vc-city').value.trim();
-      var website=document.getElementById('vc-website').value.trim();
-      if(!business||!email){statusEl.className='vc-status error';statusEl.textContent='Please add your business name and email.';return;}
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){statusEl.className='vc-status error';statusEl.textContent='Please enter a valid email address.';return;}
-      var btn=document.getElementById('vc-submit');
-      btn.disabled=true;btn.textContent='Sending\u2026';
+      var email=emailInput?emailInput.value.trim():'';
+      var cityRaw=cityInput?cityInput.value.trim():'';
+      var website=normalizeWebsite(websiteInput&&websiteInput.value);
+      var loc=parseCityState(cityRaw);
+      if(!business){statusEl.className='vc-status error';statusEl.textContent='Please add your business name.';return;}
+      if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){statusEl.className='vc-status error';statusEl.textContent='Please add your email so we can send the report.';if(emailInput)emailInput.focus();return;}
+
+      if(website){
+        var scan=await startScan({business:business,website:website,city:loc.city,state:loc.state,email:email,btn:submitBtn,busy:'Reading your website\u2026',idle:selectedOther?'Run my free scan':'Get my free report'});
+        if(scan.ok)return;
+        if(scan.reason==='website-unavailable'||scan.reason==='location-required'){
+          statusEl.className='vc-status error';
+          statusEl.textContent=scan.reason==='location-required'?'Add your city and state so we can run the local AI search.':'We could not read that website. Check the URL and try again.';
+          return;
+        }
+      }
+
+      submitBtn.disabled=true;submitBtn.textContent='Sending\u2026';
       try{
-        var r=await fetch('/api/contact-message',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'visibility',business:business,email:email,city:city,website:website})});
+        var r=await fetch('/api/contact-message',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'visibility',business:business,email:email,city:cityRaw,website:website})});
         var res=await r.json().catch(function(){return {};});
         if(!r.ok)throw new Error(res.error||'Could not send your request.');
         statusEl.className='vc-status ok';
         statusEl.textContent='Request received! Your free visibility report will arrive in your inbox within 24 hours.';
         if(window.fbq){fbq('track','Lead');}
         if(window.gtag){gtag('event','generate_lead',{event_category:'visibility_check'});}
-        form.reset();extra.hidden=true;
+        form.reset();extra.hidden=true;selectedOther=false;
         document.getElementById('vc-first-btn').textContent='Check my visibility';
       }catch(err){
         statusEl.className='vc-status error';statusEl.textContent=err.message;
       }finally{
-        btn.disabled=false;btn.textContent='Get my free report';
+        submitBtn.disabled=false;submitBtn.textContent=selectedOther?'Run my free scan':'Get my free report';
       }
     });
   }

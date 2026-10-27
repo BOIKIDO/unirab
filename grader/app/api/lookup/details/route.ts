@@ -19,6 +19,29 @@ function isValidPublicUrl(url: string): boolean {
   } catch { return false }
 }
 
+const US_STATES: Record<string, string> = {
+  alabama: 'AL', alaska: 'AK', arizona: 'AZ', arkansas: 'AR', california: 'CA',
+  colorado: 'CO', connecticut: 'CT', delaware: 'DE', florida: 'FL', georgia: 'GA',
+  hawaii: 'HI', idaho: 'ID', illinois: 'IL', indiana: 'IN', iowa: 'IA',
+  kansas: 'KS', kentucky: 'KY', louisiana: 'LA', maine: 'ME', maryland: 'MD',
+  massachusetts: 'MA', michigan: 'MI', minnesota: 'MN', mississippi: 'MS', missouri: 'MO',
+  montana: 'MT', nebraska: 'NE', nevada: 'NV', 'new hampshire': 'NH', 'new jersey': 'NJ',
+  'new mexico': 'NM', 'new york': 'NY', 'north carolina': 'NC', 'north dakota': 'ND',
+  ohio: 'OH', oklahoma: 'OK', oregon: 'OR', pennsylvania: 'PA', 'rhode island': 'RI',
+  'south carolina': 'SC', 'south dakota': 'SD', tennessee: 'TN', texas: 'TX', utah: 'UT',
+  vermont: 'VT', virginia: 'VA', washington: 'WA', 'west virginia': 'WV',
+  wisconsin: 'WI', wyoming: 'WY', 'district of columbia': 'DC',
+}
+
+function normalizeState(raw: string): string {
+  const value = String(raw || '').trim()
+  if (!value) return ''
+  const code = US_STATES[value.toLowerCase()]
+  if (code) return code
+  if (/^[A-Za-z]{2}$/.test(value)) return value.toUpperCase()
+  return value.slice(0, 10)
+}
+
 async function scrapeWebsite(url: string): Promise<string> {
   if (!isValidPublicUrl(url)) return ''
 
@@ -136,10 +159,124 @@ Return JSON only:
   }
 }
 
+async function extractWebsiteProfile(params: {
+  businessName: string
+  websiteText: string
+  city: string
+  state: string
+}): Promise<{ keywords: string[]; primaryService: string; businessName: string; city: string; state: string }> {
+  const { businessName, websiteText, city, state } = params
+  const fallbackKeywords = getKeywordsForTypes([], businessName)
+  const fallback = {
+    keywords: fallbackKeywords,
+    primaryService: fallbackKeywords[0] ?? 'local services',
+    businessName: businessName,
+    city,
+    state,
+  }
+
+  try {
+    const prompt = `You are preparing an AI visibility scan for a local business using its website content.
+
+Business name supplied by the owner: "${businessName || 'unknown'}"
+
+Website content:
+${websiteText}
+
+RULES:
+1. "keywords": 10-12 specific services or products this business sells. Every keyword must be what a real customer would search (2-5 words, e.g. "tankless water heater install", "emergency drain cleaning", "bridal makeup session").
+2. FORBIDDEN generic words used alone: "contractor", "company", "service", "general", "home improvement", "handyman", "installation service", "maintenance service". These are descriptions, not services.
+3. Use the website's own wording, brands, materials and specialties.
+4. "primary_service": the single most important service, 2-4 words.
+5. "business_name": the business name as written on the website. Empty string if unclear.
+6. "city": the city where the business is located or mainly serves. Empty string if not stated.
+7. "state": the 2-letter US state code if stated. Empty string otherwise.
+8. If this is not a local service business, still extract the specific products or services customers search for.
+
+Return JSON only with keys: keywords, primary_service, business_name, city, state.`
+
+    const raw = await queryGeminiJSON(prompt + '\n\nRespond with JSON only.', 15000)
+    let data: Record<string, unknown> = {}
+    try {
+      data = JSON.parse(raw)
+    } catch {
+      console.error('[lookup/details] Gemini returned non-JSON for website profile:', raw.slice(0, 200))
+    }
+
+    const keywords = Array.isArray(data.keywords) && data.keywords.length > 0
+      ? (data.keywords as string[]).filter((k) => typeof k === 'string' && k.trim()).slice(0, 10)
+      : fallbackKeywords.slice(0, 10)
+    const primaryService = typeof data.primary_service === 'string' && data.primary_service.trim()
+      ? data.primary_service.trim()
+      : keywords[0]
+    return {
+      keywords,
+      primaryService,
+      businessName: typeof data.business_name === 'string' ? data.business_name.trim() : '',
+      city: typeof data.city === 'string' ? data.city.trim() : '',
+      state: typeof data.state === 'string' ? data.state.trim() : '',
+    }
+  } catch (err) {
+    console.error('[lookup/details] website profile extraction failed:', err)
+    return fallback
+  }
+}
+
 export async function GET(req: NextRequest) {
   const placeId = req.nextUrl.searchParams.get('place_id') ?? ''
+  const websiteRaw = req.nextUrl.searchParams.get('website') ?? ''
+  if (!placeId && !websiteRaw) {
+    return NextResponse.json({ success: false, error: 'place_id or website required' }, { status: 400 })
+  }
+
+  // Website-only lookup: used when the business is not on Google Places (or the
+  // owner picked "My business isn't listed"). Services are extracted from the site.
   if (!placeId) {
-    return NextResponse.json({ success: false, error: 'place_id required' }, { status: 400 })
+    let website = websiteRaw.trim()
+    if (!/^https?:\/\//i.test(website)) website = `https://${website}`
+    if (!isValidPublicUrl(website)) {
+      return NextResponse.json({ success: false, error: 'Invalid website URL' }, { status: 400 })
+    }
+
+    try {
+      const websiteText = await scrapeWebsite(website)
+      if (!websiteText) {
+        return NextResponse.json({ success: false, error: 'Website content unavailable' }, { status: 422 })
+      }
+
+      const nameParam = (req.nextUrl.searchParams.get('name') ?? '').trim().slice(0, 200)
+      const cityParam = (req.nextUrl.searchParams.get('city') ?? '').trim().slice(0, 100)
+      const stateParam = normalizeState(req.nextUrl.searchParams.get('state') ?? '')
+
+      const profile = await extractWebsiteProfile({
+        businessName: nameParam,
+        websiteText,
+        city: cityParam,
+        state: stateParam,
+      })
+
+      const host = new URL(website).hostname.replace(/^www\./, '')
+      return NextResponse.json({
+        success: true,
+        data: {
+          name: nameParam || profile.businessName || host,
+          address: null,
+          website,
+          phone: null,
+          city: cityParam || profile.city,
+          state: normalizeState(stateParam || profile.state),
+          keywords: profile.keywords,
+          primary_service: profile.primaryService,
+          has_website: true,
+          place_id: null,
+          google_rating: null,
+          google_review_count: null,
+        },
+      })
+    } catch (err) {
+      console.error('[lookup/details] website lookup error:', err)
+      return NextResponse.json({ success: false, error: 'Failed to read website' }, { status: 500 })
+    }
   }
 
   try {
