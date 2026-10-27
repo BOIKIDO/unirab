@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic'
+export const maxDuration = 60
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getPlaceDetails, extractCityState } from '@/lib/places'
@@ -195,12 +196,19 @@ RULES:
 
 Return JSON only with keys: keywords, primary_service, business_name, city, state.`
 
-    const raw = await queryGeminiJSON(prompt + '\n\nRespond with JSON only.', 15000)
     let data: Record<string, unknown> = {}
-    try {
-      data = JSON.parse(raw)
-    } catch {
-      console.error('[lookup/details] Gemini returned non-JSON for website profile:', raw.slice(0, 200))
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const raw = await queryGeminiJSON(
+          prompt + '\n\nRespond with JSON only.',
+          attempt === 0 ? 15000 : 20000
+        )
+        data = JSON.parse(raw)
+        if (Array.isArray(data.keywords) && data.keywords.length > 0) break
+      } catch (err) {
+        console.error(`[lookup/details] website profile attempt ${attempt + 1} failed:`, err)
+        await new Promise((resolve) => setTimeout(resolve, 800))
+      }
     }
 
     const keywords = Array.isArray(data.keywords) && data.keywords.length > 0

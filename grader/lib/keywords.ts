@@ -61,6 +61,18 @@ const PLACES_TYPE_MAP: Record<string, string> = {
   // HVAC not always a Places type — catch by name matching
 }
 
+// Business-name synonyms → keyword category. Used when Places types and
+// website extraction are unavailable or fail.
+const NAME_SYNONYMS: Array<[RegExp, string]> = [
+  [/electric/i, 'electrical'],
+  [/plumb/i, 'plumbing'],
+  [/roof/i, 'roofing'],
+  [/hvac|heating|air condition|cooling/i, 'hvac'],
+  [/paint/i, 'painting'],
+  [/landscap|lawn|garden/i, 'landscaping'],
+  [/remodel|renovat|contract|construct|build/i, 'general_contractor'],
+]
+
 export function getKeywordsForTypes(types: string[], businessName: string): string[] {
   for (const t of types) {
     const category = PLACES_TYPE_MAP[t]
@@ -69,6 +81,9 @@ export function getKeywordsForTypes(types: string[], businessName: string): stri
 
   // Fallback: name-based heuristic
   const name = businessName.toLowerCase()
+  for (const [pattern, category] of NAME_SYNONYMS) {
+    if (pattern.test(name) && CATEGORY_KEYWORDS[category]) return CATEGORY_KEYWORDS[category]
+  }
   for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
     if (name.includes(category.replace('_', ' ')) || name.includes(category.split('_')[0])) {
       return keywords

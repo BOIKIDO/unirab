@@ -102,7 +102,7 @@ export default async function handler(request, response) {
       if (city) params.set('city', city);
       if (state) params.set('state', state);
       const dRes = await fetch(`${base}/api/lookup/details?${params.toString()}`, {
-        signal: AbortSignal.timeout(32000)
+        signal: AbortSignal.timeout(45000)
       });
       if (!dRes.ok) return fallback(response, 'website-unavailable');
       const d = await dRes.json().catch(() => ({}));
