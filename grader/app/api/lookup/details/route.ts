@@ -193,6 +193,7 @@ RULES:
 6. "city": the city where the business is located or mainly serves. Empty string if not stated.
 7. "state": the 2-letter US state code if stated. Empty string otherwise.
 8. If this is not a local service business, still extract the specific products or services customers search for.
+9. Do NOT include city or state names inside the keywords. The location is added separately when the query runs.
 
 Return JSON only with keys: keywords, primary_service, business_name, city, state.`
 
