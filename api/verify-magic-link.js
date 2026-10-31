@@ -36,6 +36,8 @@ export default async function handler(request, response) {
   if (Number(expiryPart) < Date.now()) return fail(response, 'This login link has expired. Please request a new one.');
 
   const email = Buffer.from(emailPart, 'base64url').toString('utf8').toLowerCase();
+  const next = String(request.query?.next || '');
+  const safeNext = /^\/[^/]/.test(next) && next.length < 200 ? next : '/portal';
   try {
     const cRes = await fetch(`https://api.stripe.com/v1/customers?email=${encodeURIComponent(email)}&limit=1`, {
       headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}` }
@@ -44,7 +46,7 @@ export default async function handler(request, response) {
     const customer = cRes.ok ? customers.data?.[0] : null;
     if (!customer) return fail(response, 'No UNIRAB account was found for this email address.');
 
-    return response.redirect(302, `/portal?t=${encodeURIComponent(makePortalToken(email))}`);
+    return response.redirect(302, `${safeNext}?t=${encodeURIComponent(makePortalToken(email))}`);
   } catch (error) {
     console.error('verify-magic-link failed', error instanceof Error ? error.message : 'unknown');
     return fail(response, 'Could not open the portal. Please try again.');

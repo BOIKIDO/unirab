@@ -49,6 +49,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div></main><script>
 const menu=document.querySelector('.menu'),nav=document.querySelector('.product-nav');menu?.addEventListener('click',()=>{const open=nav.classList.toggle('open');menu.setAttribute('aria-expanded',String(open))});nav?.addEventListener('click',e=>{if(e.target.matches('a')||e.target.closest('.nav-close')){nav.classList.remove('open');menu.setAttribute('aria-expanded','false')}});document.addEventListener('click',e=>{if(nav&&nav.classList.contains('open')&&!nav.contains(e.target)&&!menu.contains(e.target)){nav.classList.remove('open');menu.setAttribute('aria-expanded','false')}});
 const params=new URLSearchParams(location.search);
+const next=params.get('next');
+if(next)document.querySelector('#google-btn').href='/api/auth?action=google&next='+encodeURIComponent(next);
 const $=s=>document.querySelector(s);
 const statusOf=id=>$(id);
 if(params.get('error')){statusOf('#pw-status').classList.add('error');statusOf('#pw-status').textContent=params.get('error')}
@@ -78,16 +80,16 @@ if(mode==='register'){
   if(password.length<8){st.classList.add('error');st.textContent='Password must be at least 8 characters.';return}
   if(password!==$('#login-confirm').value){st.classList.add('error');st.textContent='Passwords do not match.';return}
   const btn=$('#pw-submit');btn.disabled=true;btn.textContent='Creating…';
-  try{const result=await post('/api/auth?action=register',{email,password,name},btn);st.textContent=result.message||'Check your inbox to activate your account.'}catch(error){st.classList.add('error');st.textContent=error.message}
+  try{const result=await post('/api/auth?action=register',{email,password,name,next},btn);st.textContent=result.message||'Check your inbox to activate your account.'}catch(error){st.classList.add('error');st.textContent=error.message}
 }else{
   if(!password){st.classList.add('error');st.textContent='Enter your password.';return}
   const btn=$('#pw-submit');btn.disabled=true;btn.textContent='Logging in…';
-  try{const result=await post('/api/auth?action=login',{email,password},btn);window.location.href=result.redirect}catch(error){st.classList.add('error');st.textContent=error.message}
+  try{const result=await post('/api/auth?action=login',{email,password,next},btn);window.location.href=result.redirect}catch(error){st.classList.add('error');st.textContent=error.message}
 }});
 $('#magic-form').addEventListener('submit',async event=>{event.preventDefault();const st=$('#magic-status');const email=$('#magic-email').value.trim();st.classList.remove('error');st.textContent='';
 if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){st.classList.add('error');st.textContent='Please enter a valid email address.';return}
 const btn=$('#magic-form button');btn.disabled=true;btn.textContent='Sending…';
-try{const response=await fetch('/api/send-magic-link',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||'Could not send the login email.');st.textContent='If an account exists for that email, we sent you a login link. It expires in 15 minutes.'}catch(error){st.classList.add('error');st.textContent=error.message}finally{btn.disabled=false;btn.textContent='Send link'}});
+try{const response=await fetch('/api/send-magic-link',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,next})});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||'Could not send the login email.');st.textContent='If an account exists for that email, we sent you a login link. It expires in 15 minutes.'}catch(error){st.classList.add('error');st.textContent=error.message}finally{btn.disabled=false;btn.textContent='Send link'}});
 // Hide the Google option until it is configured (GOOGLE_CLIENT_ID/SECRET env).
 fetch('/api/auth?action=status').then(r=>r.json()).then(s=>{if(!s.google){$('#google-btn').style.display='none';$('#divider').style.display='none'}}).catch(()=>{});
 </script><script src="/session-widget.js" defer></script>

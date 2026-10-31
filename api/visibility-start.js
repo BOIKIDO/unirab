@@ -3,6 +3,9 @@
 // directly (for businesses that are not listed), starts a real scan, and
 // returns the grader progress URL. Falls back to manual lead capture when the
 // grader backend is unavailable.
+// Starting a scan requires a client account (portal session token).
+import { readPortalToken } from './verify-magic-link.js';
+
 export const config = { maxDuration: 60 };
 
 const DEFAULT_GRADER = 'https://unirab-grader-eta.vercel.app/grader';
@@ -80,6 +83,15 @@ export default async function handler(request, response) {
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'GET, POST');
     return response.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Account required: the scan start must carry a valid portal session,
+  // either in the unirab_session cookie or as an explicit t parameter.
+  const sessionToken = String(request.query?.t || request.body?.t || '') ||
+    String(request.headers.cookie || '').split('; ').find((c) => c.startsWith('unirab_session='))?.slice('unirab_session='.length) || '';
+  if (!readPortalToken(sessionToken)) {
+    response.setHeader('Cache-Control', 'no-store');
+    return response.status(401).json({ error: 'Please log in to run the free AI check.', needsAuth: true });
   }
 
   const business = clean(request.body?.business, 160);

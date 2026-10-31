@@ -11,6 +11,8 @@ const b64url = (buf) => Buffer.from(buf).toString('base64url');
 const sign = (payload) => createHmac('sha256', process.env.MAGIC_LINK_SECRET).update(payload).digest('base64url');
 const safeEqual = (a, b) => a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
 const esc = (v) => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// Post-login redirect target: same-site absolute path only (never //host).
+const safeNext = (n) => (typeof n === 'string' && /^\/[^/]/.test(n) && n.length < 200 ? n : '/portal');
 
 // ---------- rate limiting (per serverless instance, same pattern as portal) ----------
 const hits = new Map();
@@ -148,7 +150,7 @@ export default async function handler(request, response) {
       if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
         return response.redirect(302, `/login?error=${encodeURIComponent('Google sign-in is not configured yet.')}`);
       }
-      const state = makeToken({ a: 'oauth', r: randomBytes(12).toString('hex') }, 10);
+      const state = makeToken({ a: 'oauth', r: randomBytes(12).toString('hex'), n: safeNext(url.searchParams.get('next') || request.query?.next) }, 10);
       const authorize = new URL('https://accounts.google.com/o/oauth2/v2/auth');
       authorize.searchParams.set('client_id', process.env.GOOGLE_CLIENT_ID);
       authorize.searchParams.set('redirect_uri', googleRedirectUri(request));
@@ -168,7 +170,8 @@ export default async function handler(request, response) {
       const cookie = String(request.headers.cookie || '').split('; ').find((c) => c.startsWith('unirab_oauth='))?.slice('unirab_oauth='.length) || '';
       const state = url.searchParams.get('state') || request.query?.state || '';
       const code = url.searchParams.get('code') || request.query?.code || '';
-      if (!code || !readToken(state, 'oauth') || !cookie || !safeEqual(cookie, state)) {
+      const oauth = readToken(state, 'oauth');
+      if (!code || !oauth || !cookie || !safeEqual(cookie, state)) {
         return response.redirect(302, `/login?error=${encodeURIComponent('The Google sign-in attempt could not be verified. Please try again.')}`);
       }
       const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
@@ -190,7 +193,7 @@ export default async function handler(request, response) {
       let customer = await findCustomer(profile.email);
       if (!customer) customer = await createCustomer(profile.email, profile.name);
       await setMetadata(customer.id, { unirab_google: '1', ...(profile.name ? { unirab_name: profile.name } : {}) });
-      return response.redirect(302, `/portal?t=${encodeURIComponent(makePortalToken(profile.email, 60 * 24 * 30))}`);
+      return response.redirect(302, `${safeNext(oauth.n)}?t=${encodeURIComponent(makePortalToken(profile.email, 60 * 24 * 30))}`);
     }
 
     // ----- POST ?action=login : email + password -----
@@ -209,7 +212,7 @@ export default async function handler(request, response) {
       if (!customer || !verifyPassword(password, customer.metadata?.unirab_pw)) {
         return response.status(401).json({ error: 'Invalid email or password. If you never set a password, create one below.' });
       }
-      return response.status(200).json({ ok: true, redirect: `/portal?t=${encodeURIComponent(makePortalToken(email, 60 * 24 * 30))}` });
+      return response.status(200).json({ ok: true, redirect: `${safeNext(request.body?.next)}?t=${encodeURIComponent(makePortalToken(email, 60 * 24 * 30))}` });
     }
 
     // ----- POST ?action=register : email + password, confirmed by email link -----
@@ -230,8 +233,8 @@ export default async function handler(request, response) {
         return response.status(409).json({ error: 'An account with this email already exists. Log in instead.' });
       }
       // The link carries the (already-hashed) password; it only becomes active
-      // once the email owner clicks it within 30 minutes.
-      const token = makeToken({ a: 'pwset', e: email, n: name || undefined, h: hashPassword(password) }, 30);
+      // once the email owner clicks it within 30 minutes. n = post-verify target.
+      const token = makeToken({ a: 'pwset', e: email, name: name || undefined, next: safeNext(request.body?.next), h: hashPassword(password) }, 30);
       const link = `${googleRedirectUri(request).replace(/\/api\/auth\?action=google-callback$/, '')}/api/auth?action=verify&token=${encodeURIComponent(token)}`;
       const sent = await sendConfirmationEmail(email, link);
       if (!sent) return response.status(502).json({ error: 'Could not send the confirmation email. Please try again.' });
@@ -244,9 +247,9 @@ export default async function handler(request, response) {
       if (!data) return response.redirect(302, `/login?error=${encodeURIComponent('This activation link is invalid or has expired. Please register again.')}`);
       if (!process.env.STRIPE_SECRET_KEY) return response.redirect(302, `/login?error=${encodeURIComponent('Not configured.')}`);
       let customer = await findCustomer(data.e);
-      if (!customer) customer = await createCustomer(data.e, data.n);
+      if (!customer) customer = await createCustomer(data.e, data.name);
       await setMetadata(customer.id, { unirab_pw: data.h, unirab_pw_set: new Date().toISOString() });
-      return response.redirect(302, `/portal?t=${encodeURIComponent(makePortalToken(data.e, 60 * 24 * 30))}`);
+      return response.redirect(302, `${safeNext(data.next)}?t=${encodeURIComponent(makePortalToken(data.e, 60 * 24 * 30))}`);
     }
 
     return response.status(400).json({ error: 'Unknown action.' });

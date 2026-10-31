@@ -35,9 +35,9 @@
     return '<svg class="unirab-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (paths[name] || '') + '</svg>';
   }
 
-  // First visit after a magic-link login has no cookie yet: bootstrap the
-  // session from the ?t= token on the portal page, then keep it in the cookie.
-  var token = readCookie() || (location.pathname === '/portal' ? new URLSearchParams(location.search).get('t') : null);
+  // First visit after a login has no cookie yet: bootstrap the session from
+  // the ?t= token (any page), then keep it in the cookie.
+  var token = readCookie() || new URLSearchParams(location.search).get('t');
   if (!token) return;
 
   fetch('/api/portal?action=session&t=' + encodeURIComponent(token))

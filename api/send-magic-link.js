@@ -43,7 +43,9 @@ export default async function handler(request, response) {
       const expiry = Date.now() + 15 * 60 * 1000;
       const payload = `${b64url(email)}.${expiry}`;
       const token = `${payload}.${sign(payload)}`;
-      const link = `https://unirab.vercel.app/api/verify-magic-link?token=${encodeURIComponent(token)}`;
+      const rawNext = String(request.body?.next || '');
+      const safeNext = /^\/[^/]/.test(rawNext) && rawNext.length < 200 ? `&next=${encodeURIComponent(rawNext)}` : '';
+      const link = `https://unirab.vercel.app/api/verify-magic-link?token=${encodeURIComponent(token)}${safeNext}`;
       const senderEmail = process.env.BREVO_SENDER_EMAIL || 'support@unirab.com';
       const senderName = process.env.BREVO_SENDER_NAME || 'Unirab';
       const mail = await fetch('https://api.brevo.com/v3/smtp/email', {
