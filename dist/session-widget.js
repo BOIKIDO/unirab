@@ -113,7 +113,7 @@
 
     // The widget replaces the header's log-in affordances while signed in
     // (and the START NOW CTA on the home header, so the widget sits last).
-    document.querySelectorAll('.product-nav a[href="/login"], .nav a[href="/login"], .header-actions a[href="/login"], .header-actions .header-cta')
+    document.querySelectorAll('.product-nav a[href="/login"], .nav a[href="/login"], .header-actions a[href="/login"], .header-right a[href="/login"], .header-actions .header-cta')
       .forEach(function (a) { a.style.display = 'none'; });
   }
 
@@ -121,6 +121,8 @@
     var actions = document.querySelector('.header-actions');
     if (actions) { actions.insertBefore(widget, actions.firstChild); return; }
     var header = document.querySelector('.product-header') || document.querySelector('.site-header');
+    var right = header ? header.querySelector('.header-right') : null;
+    if (right) { right.appendChild(widget); return; }
     if (header) {
       widget.classList.add('unirab-user-in-header');
       header.appendChild(widget);
