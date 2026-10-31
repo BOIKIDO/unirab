@@ -165,26 +165,40 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </main>
 <script src="/product.js"></script>
 <script>
-// Account gate: the free check requires a client account. Without a session
-// (and without a fresh ?t login token) the check UI is replaced by a
-// sign-in panel; a 401 from the scan API at any time re-shows it.
+// Account gate: the check form stays open - an account is only required to
+// RUN the check. The first submit without a session gets a 401 from the API;
+// then this sign-in panel appears with the entered data preserved, and after
+// logging in (returning with ?t) the draft is restored for a resubmit.
 (function () {
-  var main = document.getElementById('main');
   var gate = document.getElementById('vc-gate');
-  function showGate() {
-    Array.prototype.forEach.call(main.children, function (el) { if (el !== gate) el.style.display = 'none'; });
-    gate.hidden = false;
+  var KEY = 'unirab-vc-draft';
+  var FIELD_IDS = ['vc-business', 'vc-website', 'vc-city', 'vc-email'];
+  function saveDraft() {
+    var draft = {};
+    FIELD_IDS.forEach(function (id) { var el = document.getElementById(id); if (el) draft[id] = el.value; });
+    try { sessionStorage.setItem(KEY, JSON.stringify(draft)); } catch (e) {}
   }
-  var hasSession = /(?:^|;\s*)unirab_session=/.test(document.cookie);
-  var freshToken = new URLSearchParams(location.search).get('t');
-  if (!hasSession && !freshToken) showGate();
+  function restoreDraft() {
+    var draft;
+    try { draft = JSON.parse(sessionStorage.getItem(KEY) || 'null'); } catch (e) { return; }
+    if (!draft) return;
+    FIELD_IDS.forEach(function (id) { var el = document.getElementById(id); if (el && draft[id]) el.value = draft[id]; });
+  }
+  function showGate() {
+    saveDraft();
+    gate.hidden = false;
+    gate.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  // Coming back from login with a fresh ?t token: restore what they typed.
+  if (new URLSearchParams(location.search).get('t')) restoreDraft();
   fetch('/api/auth?action=status').then(function (r) { return r.json(); }).then(function (s) {
     if (!s.google) document.getElementById('vc-gate-google').style.display = 'none';
   }).catch(function () {});
   var origFetch = window.fetch;
   window.fetch = function (input, init) {
     return origFetch.apply(this, arguments).then(function (res) {
-      if (res.status === 401 && String(typeof input === 'string' ? input : input && input.url || '').indexOf('/api/visibility-start') !== -1 && init && init.method === 'POST') showGate();
+      var url = typeof input === 'string' ? input : (input && input.url) || '';
+      if (res.status === 401 && url.indexOf('/api/visibility-start') !== -1 && init && init.method === 'POST') showGate();
       return res;
     });
   };
