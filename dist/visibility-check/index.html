@@ -294,7 +294,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           }
           opts.btn.disabled=false;
           opts.btn.textContent=opts.idle;
-          return {ok:false,reason:(res&&res.reason)||'scan-unavailable'};
+          return {ok:false,reason:(res&&res.reason)||'scan-unavailable',error:res&&res.error};
         })
         .catch(function(){
           opts.btn.disabled=false;
@@ -365,6 +365,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
         var scan=await startScan({business:business,website:website,city:loc.city,state:loc.state,email:email,btn:btn,busy:'Reading your website\u2026',idle:'Check my visibility'});
         if(scan.ok)return;
+        if(scan.reason==='limit-daily'||scan.reason==='limit-once'){
+          statusEl.className='vc-status error';
+          statusEl.textContent=scan.error||'You have reached your AI check limit.';
+          return;
+        }
         if(scan.reason==='location-required'){
           revealExtra('vc-city','Add your city and state so we can ask AI the right local questions.');
           statusEl.className='vc-status error';

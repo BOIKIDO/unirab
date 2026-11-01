@@ -89,10 +89,58 @@ export default async function handler(request, response) {
   // either in the unirab_session cookie or as an explicit t parameter.
   const sessionToken = String(request.query?.t || request.body?.t || '') ||
     String(request.headers.cookie || '').split('; ').find((c) => c.startsWith('unirab_session='))?.slice('unirab_session='.length) || '';
-  if (!readPortalToken(sessionToken)) {
+  const session = readPortalToken(sessionToken);
+  if (!session) {
     response.setHeader('Cache-Control', 'no-store');
     return response.status(401).json({ error: 'Please log in to run the free AI check.', needsAuth: true });
   }
+
+  // Usage limits (kept in Stripe customer metadata): a registered user with
+  // no active subscription gets ONE check ever; an active subscriber gets
+  // three checks per UTC day. Only successful scan starts are counted.
+  let customer = null;
+  let activeSub = false;
+  if (process.env.STRIPE_SECRET_KEY) {
+    const cRes = await fetch(`https://api.stripe.com/v1/customers?email=${encodeURIComponent(session.e)}&limit=1`, {
+      headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}` }
+    }).catch(() => null);
+    const cBody = cRes?.ok ? await cRes.json().catch(() => ({})) : {};
+    customer = cBody.data?.[0] || null;
+    if (customer) {
+      const sRes = await fetch(`https://api.stripe.com/v1/subscriptions?customer=${encodeURIComponent(customer.id)}&limit=5`, {
+        headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}` }
+      }).catch(() => null);
+      const sBody = sRes?.ok ? await sRes.json().catch(() => ({})) : {};
+      activeSub = (sBody.data || []).some((s) => ['active', 'trialing', 'past_due'].includes(s.status));
+    }
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  const meta = customer?.metadata || {};
+  let usedToday = 0;
+  if (typeof meta.unirab_check_day === 'string' && meta.unirab_check_day.startsWith(today + ':')) {
+    usedToday = parseInt(meta.unirab_check_day.split(':')[1], 10) || 0;
+  }
+  if (activeSub ? usedToday >= 3 : meta.unirab_check_used === '1') {
+    response.setHeader('Cache-Control', 'no-store');
+    return response.status(429).json({
+      ok: false,
+      reason: activeSub ? 'limit-daily' : 'limit-once',
+      error: activeSub
+        ? 'Daily limit reached - your plan includes 3 AI checks per day. You can run another tomorrow.'
+        : 'Your free AI check has been used. Subscribe to any plan to run up to 3 checks per day.'
+    });
+  }
+  const recordUse = () => {
+    if (!customer || !process.env.STRIPE_SECRET_KEY) return Promise.resolve();
+    const params = activeSub
+      ? { 'metadata[unirab_check_day]': `${today}:${usedToday + 1}` }
+      : { 'metadata[unirab_check_used]': '1' };
+    return fetch(`https://api.stripe.com/v1/customers/${encodeURIComponent(customer.id)}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(params)
+    }).catch(() => null);
+  };
 
   const business = clean(request.body?.business, 160);
   if (!business) return response.status(400).json({ error: 'Please enter your business name.' });
@@ -137,6 +185,7 @@ export default async function handler(request, response) {
 
     const started = await startScan(base, card, business);
     if (!started.jobId) return fallback(response, started.reason || 'scan-unavailable');
+    await recordUse();
 
     response.setHeader('Cache-Control', 'no-store');
     return response.status(200).json({
