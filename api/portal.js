@@ -184,7 +184,9 @@ export default async function handler(request, response) {
         lastCheck = { jobId, business: business || null, location: location || null, date: date || null, reportUrl: `${graderBase}/research/${encodeURIComponent(jobId)}`, status: 'unknown', score: null, scoreChatgpt: null, scoreGemini: null };
         try {
           const rRes = await fetch(`${graderBase}/api/research/${encodeURIComponent(jobId)}/report`, { signal: AbortSignal.timeout(8000) }).catch(() => null);
-          if (rRes?.ok) {
+          if (rRes?.status === 202) {
+            lastCheck.status = 'running';
+          } else if (rRes?.ok) {
             const job = (await rRes.json().catch(() => ({})))?.data?.job;
             if (job) {
               lastCheck.status = 'complete';
@@ -192,8 +194,6 @@ export default async function handler(request, response) {
               lastCheck.scoreChatgpt = typeof job.score_chatgpt === 'number' ? job.score_chatgpt : null;
               lastCheck.scoreGemini = typeof job.score_gemini === 'number' ? job.score_gemini : null;
             }
-          } else if (rRes?.status === 202) {
-            lastCheck.status = 'running';
           } else if (rRes?.status === 404) {
             lastCheck.status = 'not-found';
           }
