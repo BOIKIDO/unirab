@@ -91,7 +91,7 @@
         (data.hasActiveSubscription
           ? '<a role="menuitem" href="/api/portal?action=cheat-sheet&t=' + t + '">' + icon('file') + ' AI Cheat Sheet</a>'
           : '') +
-        '<a role="menuitem" href="/visibility-check">' + icon('pulse') + ' AI Check</a>' +
+        '<a role="menuitem" href="/visibility-check">' + icon('pulse') + ' AI Visibility Check</a>' +
         '<a role="menuitem" href="/portal?t=' + t + '#upgrade">' + icon('up') + ' Upgrade subscription</a>' +
         '<div class="unirab-user-sep" role="separator"></div>' +
         '<button type="button" role="menuitem" class="unirab-user-logout">' + icon('out') + ' Log out</button>' +
