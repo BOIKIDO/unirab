@@ -83,7 +83,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .vc-suggest button.vc-other b{color:var(--deep)}
 .vc-suggest button.vc-other:hover{background:var(--mint)}
 .vc-form{position:relative}
-.vc-gate{max-width:480px;margin:0 auto;background:#fff;border-radius:16px;padding:34px 32px;box-shadow:0 24px 60px rgba(0,0,0,.28);text-align:center}
+.vc-gate{position:fixed;inset:0;z-index:1000;background:rgba(18,25,24,.62);display:grid;place-items:center;padding:20px}
+.vc-gate[hidden]{display:none}
+.vc-gate-card{max-width:460px;width:100%;background:#fff;border-radius:16px;padding:34px 32px;box-shadow:0 24px 60px rgba(0,0,0,.4);text-align:center}
 .vc-gate h2{font-size:24px;letter-spacing:-.02em;margin:0 0 10px;color:var(--ink)}
 .vc-gate p{font-size:14px;color:#5d6d6a;line-height:1.6;margin:0 0 20px}
 .vc-gate-actions{display:grid;gap:10px}
@@ -101,6 +103,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <header class="product-header"><button class="menu" aria-label="Open navigation" aria-expanded="false"><span></span><span></span></button><nav class="product-nav" aria-label="Primary"><button class="nav-close" type="button" aria-label="Close navigation">×</button><a href="/#included">About</a><a href="/#pricing">Pricing</a><a href="/#how">How It Works</a><a href="/#cheat-sheet">AI Cheat Sheet</a><a href="/visibility-check">Free AI Check</a><a href="/case-studies">Case Studies</a><a href="/#faq">Support</a><a href="/login">Customer Login</a></nav><a class="brand" href="/" aria-label="UNIRAB home"><span>UNI</span><b>RAB</b><i></i></a><div class="header-right"><a class="header-login" href="/login">Client Login</a></div></header>
 <main class="vc-main" id="main">
   <div class="vc-gate" id="vc-gate" hidden>
+    <div class="vc-gate-card">
     <h2>Create your free account to run the check</h2>
     <p>It only takes a moment - use Google or a one-time email link. Your check and results stay linked to your account.</p>
     <div class="vc-gate-actions">
@@ -108,6 +111,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <a class="vc-gate-btn" href="/login?mode=link&amp;next=/visibility-check">Email me a login link</a>
     </div>
     <p class="vc-gate-note">Already have an account? <a href="/login?next=/visibility-check">Log in</a></p>
+    </div>
   </div>
   <section class="vc-hero">
     <div class="vc-wrap">
@@ -187,8 +191,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function showGate() {
     saveDraft();
     gate.hidden = false;
-    gate.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.body.style.overflow = 'hidden';
+    var first = gate.querySelector('.vc-gate-btn');
+    if (first) setTimeout(function () { first.focus(); }, 50);
   }
+  function hideGate() {
+    gate.hidden = true;
+    document.body.style.overflow = '';
+  }
+  gate.addEventListener('click', function (e) { if (e.target === gate) hideGate(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !gate.hidden) hideGate(); });
   // Coming back from login with a fresh ?t token: restore what they typed.
   if (new URLSearchParams(location.search).get('t')) restoreDraft();
   fetch('/api/auth?action=status').then(function (r) { return r.json(); }).then(function (s) {
