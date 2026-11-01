@@ -30,6 +30,7 @@
       user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
       file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
       up: '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>',
+      pulse: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
       out: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'
     };
     return '<svg class="unirab-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (paths[name] || '') + '</svg>';
@@ -90,6 +91,7 @@
         (data.hasActiveSubscription
           ? '<a role="menuitem" href="/api/portal?action=cheat-sheet&t=' + t + '">' + icon('file') + ' AI Cheat Sheet</a>'
           : '') +
+        '<a role="menuitem" href="/visibility-check">' + icon('pulse') + ' AI Check</a>' +
         '<a role="menuitem" href="/portal?t=' + t + '#upgrade">' + icon('up') + ' Upgrade subscription</a>' +
         '<div class="unirab-user-sep" role="separator"></div>' +
         '<button type="button" role="menuitem" class="unirab-user-logout">' + icon('out') + ' Log out</button>' +

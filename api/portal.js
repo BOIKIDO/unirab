@@ -175,6 +175,31 @@ export default async function handler(request, response) {
         : UPGRADE_ORDER.map((key) => ({ plan: key, name: PLANS_BY_KEY[key].name, price: PLANS_BY_KEY[key].price }));
 
       await checkMailbox().catch(() => null);
+
+      // Last AI check (unirab_last_check metadata) + live score from the grader.
+      let lastCheck = null;
+      if (meta.unirab_last_check) {
+        const [jobId, business, location, date] = String(meta.unirab_last_check).split('|');
+        const graderBase = String(process.env.GRADER_URL || 'https://unirab-grader-eta.vercel.app/grader').replace(/\/$/, '');
+        lastCheck = { jobId, business: business || null, location: location || null, date: date || null, reportUrl: `${graderBase}/research/${encodeURIComponent(jobId)}`, status: 'unknown', score: null, scoreChatgpt: null, scoreGemini: null };
+        try {
+          const rRes = await fetch(`${graderBase}/api/research/${encodeURIComponent(jobId)}/report`, { signal: AbortSignal.timeout(8000) }).catch(() => null);
+          if (rRes?.ok) {
+            const job = (await rRes.json().catch(() => ({})))?.data?.job;
+            if (job) {
+              lastCheck.status = 'complete';
+              lastCheck.score = typeof job.score_overall === 'number' ? job.score_overall : null;
+              lastCheck.scoreChatgpt = typeof job.score_chatgpt === 'number' ? job.score_chatgpt : null;
+              lastCheck.scoreGemini = typeof job.score_gemini === 'number' ? job.score_gemini : null;
+            }
+          } else if (rRes?.status === 202) {
+            lastCheck.status = 'running';
+          } else if (rRes?.status === 404) {
+            lastCheck.status = 'not-found';
+          }
+        } catch { /* status stays unknown */ }
+      }
+
       response.setHeader('Cache-Control', 'no-store');
       return response.status(200).json({
         email: customer.email,
@@ -200,7 +225,8 @@ export default async function handler(request, response) {
               priceId
             }
           : null,
-        upgrades
+        upgrades,
+        lastCheck
       });
     }
 

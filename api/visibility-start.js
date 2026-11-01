@@ -130,11 +130,18 @@ export default async function handler(request, response) {
         : 'Your free AI check has been used. Subscribe to any plan to run up to 3 checks per day.'
     });
   }
-  const recordUse = () => {
+  const recordUse = (started) => {
     if (!customer || !process.env.STRIPE_SECRET_KEY) return Promise.resolve();
     const params = activeSub
       ? { 'metadata[unirab_check_day]': `${today}:${usedToday + 1}` }
       : { 'metadata[unirab_check_used]': '1' };
+    // Remember the last check so the client portal can surface it.
+    params['metadata[unirab_last_check]'] = [
+      started.jobId,
+      String(started.startBody.business_name || '').replace(/\|/g, '/').slice(0, 120),
+      `${String(started.startBody.location_city || '').slice(0, 60)},${String(started.startBody.location_state || '').slice(0, 30)}`,
+      new Date().toISOString()
+    ].join('|');
     return fetch(`https://api.stripe.com/v1/customers/${encodeURIComponent(customer.id)}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`, 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -185,7 +192,7 @@ export default async function handler(request, response) {
 
     const started = await startScan(base, card, business);
     if (!started.jobId) return fallback(response, started.reason || 'scan-unavailable');
-    await recordUse();
+    await recordUse(started);
 
     response.setHeader('Cache-Control', 'no-store');
     return response.status(200).json({
