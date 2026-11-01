@@ -34,12 +34,23 @@ export default async function handler(request, response) {
   }
 
   try {
-    // Only paying customers get a link: look the email up in Stripe.
+    // Only known accounts get a link: look the email up in Stripe. With a
+    // registration intent (register=1 from the sign-up panel) an unknown
+    // email becomes a lead account first, so the link activates it.
     const cRes = await fetch(`https://api.stripe.com/v1/customers?email=${encodeURIComponent(email)}&limit=1`, {
       headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}` }
     });
     const customers = await cRes.json();
-    if (cRes.ok && customers.data?.length) {
+    let known = Boolean(cRes.ok && customers.data?.length);
+    if (cRes.ok && !known && (request.body?.register === true || request.body?.register === '1')) {
+      const created = await fetch('https://api.stripe.com/v1/customers', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ email, name: email.split('@')[0], 'metadata[unirab_lead]': 'magic-register' })
+      }).catch(() => null);
+      if (created?.ok) known = true;
+    }
+    if (cRes.ok && known) {
       const expiry = Date.now() + 15 * 60 * 1000;
       const payload = `${b64url(email)}.${expiry}`;
       const token = `${payload}.${sign(payload)}`;
